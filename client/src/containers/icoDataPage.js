@@ -1,37 +1,8 @@
 import React from "react";
-import Web3 from "web3";
+
 import { ICOStatus, getICOStatus } from "../utils/contractDataReader";
-import rftABI from "../utils/rftContractDef";
-import connectToMetamask from "../utils/metamask";
 
 class IcoDataPage extends React.Component {
-  state = {
-    balance: 0,
-    rftc: null,
-    accounts: [],
-  };
-
-  async componentDidMount() {
-    let { accounts } = await connectToMetamask(null);
-    let web3 = new Web3(window.web3.currentProvider);
-    let rftc = new web3.eth.Contract(rftABI, this.props.nft.rft.rftAddress);
-
-    rftc.events.Bought(async (error, event) => {
-      let balance = await rftc.methods.balanceOf(accounts[0]).call();
-      let totalSupply = await rftc.methods.totalSupply().call();
-      this.setState({ balance: balance, totalSupply: totalSupply });
-    });
-
-    let balance = await rftc.methods.balanceOf(accounts[0]).call();
-    let totalSupply = await rftc.methods.totalSupply().call();
-    this.setState({
-      accounts: accounts,
-      rftc: rftc,
-      balance: balance,
-      totalSupply: totalSupply,
-    });
-  }
-
   getICOStatusJSX = (nft) => {
     let icoStatus = getICOStatus(nft);
     let icoStatusJSX = "";
@@ -46,6 +17,7 @@ class IcoDataPage extends React.Component {
         );
         break;
       case ICOStatus.IN_PROGRESS:
+      case ICOStatus.COMPLETED:
         icoStatusJSX = (
           <li className="list-group-item d-flex justify-content-between align-items-center text-info">
             ICO End Date
@@ -54,8 +26,7 @@ class IcoDataPage extends React.Component {
             </span>
           </li>
         );
-        break;
-      case ICOStatus.COMPLETED:
+
         break;
       default:
         break;
@@ -64,46 +35,67 @@ class IcoDataPage extends React.Component {
   };
 
   render() {
+    // console.log(JSON.stringify(this.props));
+
+    let collapseTarget = `collapse${this.props.index}`;
+
     return (
       <React.Fragment>
-        <form>
-          <ul className="list-group list-group-flush">
-            <li className="list-group-item d-flex justify-content-between align-items-center text-info">
-              Name
-              <span className="text-info">{this.props.nft.rft.name}</span>
-            </li>
-            <li className="list-group-item d-flex justify-content-between align-items-center text-info">
-              Symbol
-              <span className="text-info">{this.props.nft.rft.symbol}</span>
-            </li>
-            <li className="list-group-item d-flex justify-content-between align-items-center text-info">
-              Price in DAI
-              <span className="text-info">{this.props.nft.rft.tokenPrice}</span>
-            </li>
-            <li className="list-group-item d-flex justify-content-between align-items-center text-info">
-              Issued
-              <span className="text-info">
-                {this.props.nft.rft.tokenSupply}
+        <div>
+          <p>
+            <button
+              className="btn btn-dark dropdown-toggle btn-block text-info"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target={"#" + collapseTarget}
+            >
+              {this.props.nft.rft.symbol}
+              <span className="badge badge-warning text-dark mx-1">
+                {this.props.balance}
               </span>
-            </li>
-            <li className="list-group-item d-flex justify-content-between align-items-center text-info">
-              Reserved
-              <span className="text-info">
-                {this.props.nft.rft.tokenReserve}
-              </span>
-            </li>
-            <li className="list-group-item d-flex justify-content-between align-items-center text-info">
-              Sold
-              <span className="text-info">{this.state.totalSupply}</span>
-            </li>
-            <li className="list-group-item d-flex justify-content-between align-items-center text-info">
-              You own
-              <span className="text-info">{this.state.balance}</span>
-            </li>
-            {this.getICOStatusJSX(this.props.nft)}
-          </ul>
-          {this.props.children}
-        </form>
+            </button>
+          </p>
+          <div className="collapse" id={collapseTarget}>
+            <ul className="list-group list-group-flush">
+              <li className="list-group-item d-flex justify-content-between align-items-center text-info">
+                Name
+                <span className=" text-info">{this.props.nft.rft.name}</span>
+              </li>
+              <li className="list-group-item d-flex justify-content-between align-items-center text-info">
+                Symbol
+                <span className=" text-info">{this.props.nft.rft.symbol}</span>
+              </li>
+              <li className="list-group-item d-flex justify-content-between align-items-center text-info">
+                Price in DAI
+                <span className=" text-info">
+                  {this.props.nft.rft.tokenPrice}
+                </span>
+              </li>
+              <li className="list-group-item d-flex justify-content-between align-items-center text-info">
+                Issued
+                <span className=" text-info">
+                  {this.props.nft.rft.tokenSupply}
+                </span>
+              </li>
+              <li className="list-group-item d-flex justify-content-between align-items-center text-info">
+                Reserved
+                <span className=" text-info">
+                  {this.props.nft.rft.tokenReserve}
+                </span>
+              </li>
+              <li className="list-group-item d-flex justify-content-between align-items-center text-info">
+                Sold
+                <span className=" text-info">{this.props.totalSupply}</span>
+              </li>
+              <li className="list-group-item d-flex justify-content-between align-items-center text-info">
+                You own
+                <span className=" text-info">{this.props.balance}</span>
+              </li>
+              {this.getICOStatusJSX(this.props.nft)}
+            </ul>
+            {this.props.children}
+          </div>
+        </div>
       </React.Fragment>
     );
   }

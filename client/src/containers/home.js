@@ -3,15 +3,17 @@ import mmlogo from "../metamask-fox.svg";
 import logo from "../logo.svg";
 import "../App.css";
 import Marketplace from "./marketplace";
-import Manager from "./manage";
+import Manager from "./manager";
 
 import { getMaskedAddress } from "../utils/shorten";
 import connectToMetamask from "../utils/metamask";
 import Main from "./main";
+import Portfolio from "./portfolio";
 
-const MAIN = 0;
-const MARKET_PLACE = 1;
-const PUBLISH = 2;
+export const MAIN = 0;
+export const MARKET_PLACE = 1;
+export const MANAGER = 2;
+export const PORTFOLIO = 3;
 
 class Home extends React.Component {
   state = {
@@ -29,34 +31,48 @@ class Home extends React.Component {
 
   componentDidMount() {}
   setupMetamask = async () => {
-    let emptyAccounts = () => this.setState({ accounts: [] });
-    let { accounts } = await connectToMetamask(emptyAccounts);
-    this.setState({
-      accounts: accounts,
-    });
+    try {
+      let emptyAccounts = () => this.setState({ accounts: [] });
+      let { accounts } = await connectToMetamask(emptyAccounts);
+      this.setState({
+        accounts: accounts,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   getPage = () => {
     let page = <Marketplace></Marketplace>;
     let marketPlaceActive = "text-decoration-underline";
     let publishActive = "";
-    if (this.state.page == PUBLISH) {
+    let portActive = "";
+    if (this.state.page == MANAGER) {
       page = <Manager></Manager>;
       marketPlaceActive = "";
       publishActive = "text-decoration-underline";
+      portActive = "";
     }
 
     if (this.state.page == MAIN) {
-      page = <Main></Main>;
+      page = <Main gotoPage={this.gotoPage}></Main>;
       marketPlaceActive = "";
       publishActive = "";
+      portActive = "";
     }
 
-    return { page, marketPlaceActive, publishActive };
+    if (this.state.page == PORTFOLIO) {
+      page = <Portfolio></Portfolio>;
+      marketPlaceActive = "";
+      publishActive = "";
+      portActive = "text-decoration-underline";
+    }
+
+    return { page, marketPlaceActive, publishActive, portActive };
   };
 
   render() {
-    let { page, marketPlaceActive, publishActive } = this.getPage();
+    let { page, marketPlaceActive, publishActive, portActive } = this.getPage();
 
     let accountsJSX = (
       <button
@@ -86,8 +102,10 @@ class Home extends React.Component {
               className="navbar-brand border-0 text-warning"
               onClick={() => this.gotoPage(MAIN)}
             >
-              <img src={logo} className="mm-logo" alt="red fly" />
-              Red Fly
+              <a href="#" className="navbar-brand border-0 text-warning">
+                <img src={logo} className="mm-logo" alt="red fly" />
+                Red Fly
+              </a>
             </div>
             <button
               className="navbar-toggler"
@@ -113,9 +131,17 @@ class Home extends React.Component {
                 <li className="nav-item">
                   <button
                     className={`btn btn-link border-0  ${publishActive}`}
-                    onClick={() => this.gotoPage(PUBLISH)}
+                    onClick={() => this.gotoPage(MANAGER)}
                   >
                     Manage my NFTs/ICOs
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className={`btn btn-link border-0  ${portActive}`}
+                    onClick={() => this.gotoPage(PORTFOLIO)}
+                  >
+                    Portfolio
                   </button>
                 </li>
               </ul>

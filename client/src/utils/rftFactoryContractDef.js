@@ -1,3 +1,5 @@
+import { rftFactoryContractAddress } from "../config";
+
 const abi = [
   { inputs: [], stateMutability: "nonpayable", type: "constructor" },
   {
@@ -53,5 +55,8 @@ const abi = [
     constant: true,
   },
 ];
-const address = "0x26E20Ea5F8adaB5F88E3Da7668098e2D3dcB0acB";
+
+// const address = "0x723cF2EC22cbf503f02b0EB8E330Eb8dD115a7Cb";
+
+const address = rftFactoryContractAddress;
 export { address, abi };

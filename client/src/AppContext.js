@@ -4,6 +4,7 @@ import { setupRFTFactoryContract } from "./utils/rftFactoryContract";
 
 import { getMergedData } from "./utils/contractData";
 import EventEmitter, { DATA_LOADED_EVENT } from "./eventEmitter";
+import connectToMetamask from "./utils/metamask";
 
 export const AppContext = React.createContext({});
 
@@ -12,22 +13,33 @@ class AppContextProvider extends React.Component {
     nfts: [],
     nftc: null,
     rftfc: null,
-    subscriberList: [],
+    accounts: [],
   };
 
   async componentDidMount() {
     let nftc = setupNFTContract(this.getNFTEventHandlers());
     let rftfc = setupRFTFactoryContract(this.getRFTFactoryEventHandlers());
+    let accounts = await this.getAccountsFromMetamask();
     this.setState({
       nftc: nftc,
       rftfc: rftfc,
+      accounts: accounts,
     });
     await this.refresh();
   }
 
+  getAccountsFromMetamask = async () => {
+    try {
+      let emptyAccounts = () => this.setState({ accounts: [] });
+      let { accounts } = await connectToMetamask(emptyAccounts);
+      return accounts;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   refresh = async () => {
-    let nfts = await getMergedData(this.getRFTEventHandlers);
-    console.log(nfts);
+    let nfts = await getMergedData(this.getRFTEventHandlers());
     EventEmitter.publish(DATA_LOADED_EVENT, nfts);
     this.setState({
       nfts: nfts,
@@ -44,6 +56,9 @@ class AppContextProvider extends React.Component {
         value={{
           nfts: this.state.nfts,
           registerForUpdates: this.registerForUpdates,
+          nftc: this.state.nftc,
+          rftfc: this.state.rftfc,
+          accounts: this.state.accounts,
         }}
       >
         {this.props.children}

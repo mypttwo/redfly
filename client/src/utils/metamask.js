@@ -11,9 +11,7 @@ const connectToMetamask = async (accountsChangedHandler) => {
 
       if (accountsChangedHandler)
         provider.on("accountsChanged", (connectInfo) => {
-          console.log("Metamask accountsChanged!");
-          console.log(JSON.stringify(connectInfo));
-          accountsChangedHandler();
+          accountsChangedHandler(connectInfo);
         });
 
       return {
@@ -25,6 +23,7 @@ const connectToMetamask = async (accountsChangedHandler) => {
     }
   } catch (error) {
     console.error(error);
+    return null;
   }
 };
 

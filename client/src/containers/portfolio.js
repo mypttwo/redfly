@@ -11,7 +11,7 @@ import IcoDropdown from "./icoDropdown";
 import nftFilter from "../utils/nftFilter";
 import { IcoFilter } from "../utils/nftFilter";
 
-class Marketplace extends React.Component {
+class Portfolio extends React.Component {
   state = {
     nfts: [],
     loading: true,
@@ -22,6 +22,7 @@ class Marketplace extends React.Component {
   async componentDidMount() {
     // console.log(10 * (await getUSDEth()));
 
+    console.log(this.props.appContext.nfts);
     this.props.appContext.registerForUpdates(this.updateNFTS);
     this.setState({
       nfts: this.props.appContext.nfts,
@@ -34,7 +35,7 @@ class Marketplace extends React.Component {
   };
 
   updateNFTS = (nfts) => {
-    // console.log(JSON.stringify(nfts));
+    console.log(JSON.stringify(nfts));
     this.setState({
       nfts: nfts,
     });
@@ -105,16 +106,8 @@ class Marketplace extends React.Component {
       this.state.icoFilter
     );
 
-    return (
-      <div className="container">
-        <MetamaskConnectWarning />
-        {this.getControls()}
-        <ArtworkCollectionMasonry nfts={nfts}>
-          {this.getChildrenJSX(nfts)}
-        </ArtworkCollectionMasonry>
-      </div>
-    );
+    return <div className="container"></div>;
   }
 }
 
-export default withAppContext(Marketplace);
+export default withAppContext(Portfolio);

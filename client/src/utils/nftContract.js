@@ -2,6 +2,7 @@ import Web3 from "web3";
 import { abi, address } from "./nftContractDef";
 import connectToMetamask from "../utils/metamask";
 import axios from "axios";
+import { server } from "../config";
 
 const setupNFTContract = (eventHandler) => {
   let web3 = new Web3(window.web3.currentProvider);
@@ -12,11 +13,7 @@ const setupNFTContract = (eventHandler) => {
       if (error) {
         eventHandler.handleMinted(error);
       } else {
-        eventHandler.handleMinted(
-          error,
-          event.returnValues.tokenId,
-          event.returnValues.minter
-        );
+        eventHandler.handleMinted(error, event);
       }
     }
   });
@@ -105,14 +102,17 @@ const withdraw = async (nftc) => {
 };
 
 const approveTransferOfTokenFromNFTToRFT = async (
-  nftc,
   rftAddress,
-  tokenId
+  tokenId,
+  recieptHandler
 ) => {
   let { accounts } = await connectToMetamask(null);
 
   if (accounts.length) {
     try {
+      let web3 = new Web3(window.web3.currentProvider);
+      let nftc = new web3.eth.Contract(abi, address);
+
       await nftc.methods
         .approve(rftAddress, tokenId)
         .send({ from: accounts[0] })
@@ -120,33 +120,45 @@ const approveTransferOfTokenFromNFTToRFT = async (
           console.log("hash :" + hash);
         })
         .on("receipt", function (receipt) {
-          console.log("receipt :" + JSON.stringify(receipt));
+          if (recieptHandler) {
+            recieptHandler(null, receipt);
+          } else console.log("receipt :" + JSON.stringify(receipt));
         })
         .on("error", function (error, receipt) {
-          // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
-          console.log("error :" + error);
-          console.log("receipt :" + JSON.stringify(receipt));
+          if (recieptHandler) {
+            recieptHandler(error, receipt);
+          } else {
+            console.log("error :" + error);
+            console.log("receipt :" + JSON.stringify(receipt));
+          }
         });
     } catch (error) {
       console.error(error);
+      recieptHandler(error);
     }
   }
 };
 
 const getAllNFTS = async (nftc) => {
-  let tokenData = await nftc.methods.allTokens().call();
-  let tokenUriPromises = tokenData[1].map((tokenURI) => {
-    return axios.get(tokenURI);
-  });
-  return Promise.all(tokenUriPromises).then((values) => {
-    let nfts = values.map((value, index) => {
-      let nft = value.data;
-      nft.tokenId = tokenData[0][index];
-      nft.owner = tokenData[2][index];
-      return nft;
+  try {
+    let tokenData = await nftc.methods.allTokens().call();
+    console.log(JSON.stringify(tokenData[1]));
+    let tokenUriPromises = tokenData[1].map((tokenURI) => {
+      return axios.get(`${server}/ipfs/?${tokenURI}`);
     });
-    return nfts;
-  });
+    return Promise.all(tokenUriPromises).then((values) => {
+      let nfts = values.map((value, index) => {
+        let nft = value.data;
+        nft.tokenId = tokenData[0][index];
+        nft.owner = tokenData[2][index];
+        return nft;
+      });
+      console.log(nfts);
+      return nfts;
+    });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export {

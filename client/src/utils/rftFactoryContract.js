@@ -1,6 +1,5 @@
 import Web3 from "web3";
 import { abi, address } from "./rftFactoryContractDef";
-import rftABI from "./rftContractDef";
 import connectToMetamask from "./metamask";
 
 const setupRFTFactoryContract = (eventHandler) => {
@@ -29,22 +28,27 @@ const createRFT = async (
   symbol,
   nftAddress,
   nftTokenId,
-  icoSharePrice,
-  icoShareSupply,
-  icoShareReserve,
+  icoTokenPrice,
+  icoTokenSupply,
+  icoTokenReserve,
   recieptHandler
 ) => {
   try {
     let { accounts } = await connectToMetamask(null);
+    let web3 = new Web3(window.web3.currentProvider);
+
     rftfc.methods
       .createToken(
         name,
         symbol,
         nftAddress,
         nftTokenId,
-        icoSharePrice,
-        icoShareSupply,
-        icoShareReserve
+        icoTokenPrice,
+        //web3.utils.toWei(`${icoTokenPrice}`),
+        // icoTokenSupply,
+        // icoTokenReserve,
+        web3.utils.toWei(`${icoTokenSupply}`),
+        web3.utils.toWei(`${icoTokenReserve}`)
       )
       .send({ from: accounts[0] })
       .on("transactionHash", function (hash) {
@@ -64,48 +68,11 @@ const createRFT = async (
   }
 };
 
-const getRFTs = async (rftfc, rftEventHandler) => {
+const getRFTs = async () => {
   try {
-    let { accounts } = await connectToMetamask(null);
-    let r = await rftfc.methods.getRFTs().call({ from: accounts[0] });
-
-    if (r.length) {
-      let web3 = new Web3(window.web3.currentProvider);
-      let rftc = new web3.eth.Contract(rftABI, r[0]);
-      rftc.events.ICOStarted(async (error, event) => {
-        if (rftEventHandler && rftEventHandler.handleICOStarted) {
-          rftEventHandler.handleICOStarted(
-            error,
-            event.returnValues.nftAddress,
-            event.returnValues.tokenId,
-            event.returnValues.rftAddress,
-            event.returnValues.name,
-            event.returnValues.symbol,
-            event.returnValues.icoSharePrice,
-            event.returnValues.icoShareSupply,
-            event.returnValues.icoShareReserve,
-            event.returnValues.icoEnd,
-            event.returnValues.owner
-          );
-        }
-      });
-      rftc.events.Bought(async (error, event) => {
-        if (rftEventHandler && rftEventHandler.handleBought) {
-          rftEventHandler.handleBought(
-            error,
-            event.returnValues.nftAddress,
-            event.returnValues.tokenId,
-            event.returnValues.rftAddress,
-            event.returnValues.name,
-            event.returnValues.symbol,
-            event.returnValues.buyerAddress,
-            event.returnValues.shareAmount
-          );
-        }
-      });
-    }
-
-    return r;
+    let rftfc = setupRFTFactoryContract(null);
+    let rftAddressList = await rftfc.methods.getRFTs().call();
+    return rftAddressList;
   } catch (error) {
     console.error(error);
   }

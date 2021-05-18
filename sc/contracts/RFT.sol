@@ -59,12 +59,16 @@ contract RFT is ERC20, Ownable{
         return (address(nft), nftTokenId, address(this), name(), symbol(), icoSharePrice, icoShareSupply, icoShareReserve, icoEnd, owner(), balanceOf(msg.sender));
     }
 
-    function withdraw() external onlyOwner {
-        require(block.timestamp > icoEnd, "ICO in progress");
+    function withdrawDai(uint amount) external onlyOwner {
         uint daiBalance = dai.balanceOf(address(this));
+        require(amount <= daiBalance, "Withdrawal should be less than current balance");
         if(daiBalance > 0){
             dai.transfer(owner(), daiBalance);
         }
+    }
+
+    function mintUnsoldICO() external onlyOwner {
+        require(block.timestamp > icoEnd, "ICO in progress");
         uint unsoldShares = icoShareSupply - totalSupply();
         if(unsoldShares > 0) {
             _mint(owner(), unsoldShares);

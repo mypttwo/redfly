@@ -1,3 +1,5 @@
+import { nftContractAddress } from "../config";
+
 const abi = [
   {
     inputs: [{ internalType: "uint256", name: "_fees", type: "uint256" }],
@@ -405,6 +407,8 @@ const abi = [
     type: "function",
   },
 ];
-const address = "0xa926A8EaD8C7EebB523e746bd3ECbf7Cd5Dd7DCe";
+
+// const address = "0xEDcFA65f3628018a793eB8891Fa3b4DAA9F78A8e";
+const address = nftContractAddress;
 
 export { address, abi };

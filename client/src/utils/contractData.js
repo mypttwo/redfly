@@ -1,6 +1,6 @@
 import Web3 from "web3";
 import { setupNFTContract, getAllNFTS } from "./nftContract";
-import { setupRFTFactoryContract, getRFTs } from "./rftFactoryContract";
+import { getRFTs } from "./rftFactoryContract";
 import rftABI from "../utils/rftContractDef";
 import connectToMetamask from "../utils/metamask";
 
@@ -10,32 +10,61 @@ const getNFTData = async (nftEventHandlers) => {
   return nfts;
 };
 
-const getRFTData = async (rftFactoryEventHandlers, rftEventHandlers) => {
-  let rftfc = setupRFTFactoryContract(rftFactoryEventHandlers);
-
-  let rftAddressList = await getRFTs(rftfc, rftEventHandlers);
+const getRFTData = async (rftEventHandler) => {
+  let web3 = new Web3(window.web3.currentProvider);
+  let rftAddressList = await getRFTs();
 
   if (Array.isArray(rftAddressList)) {
     let rftDataPromises = rftAddressList.map((rftAddress) => {
-      let web3 = new Web3(window.web3.currentProvider);
       let rftc = new web3.eth.Contract(rftABI, rftAddress);
       let res = rftc.methods.getData().call();
-
       return res;
     });
     return Promise.all(rftDataPromises).then((values) => {
       let rfts = values.map((value, index) => {
-        //temp code to get balance; should be removed after contract->getData returns this as last param
-        // let { accounts } = await connectToMetamask(null);
-        // let web3 = new Web3(window.web3.currentProvider);
-        // let rftc = new web3.eth.Contract(rftABI, rftAddressList[index]);
-        // let balance = await rftc.methods.balanceOf(accounts[0]).call();
-        // console.log(balance);
-
+        //set end date
         let icoEndDate = 0;
-        if (value[8] !== 0) {
+        if (value[8] != 0) {
           icoEndDate = new Date(value[8] * 1000);
         }
+
+        // set contract and event handlers
+        let rftAddress = value[2];
+        let rftc = new web3.eth.Contract(rftABI, rftAddress); // repeating...TBD
+        rftc.events.ICOStarted(async (error, event) => {
+          console.log("ICOStarted");
+
+          if (rftEventHandler && rftEventHandler.handleICOStarted) {
+            rftEventHandler.handleICOStarted(
+              error,
+              event.returnValues.nftAddress,
+              event.returnValues.tokenId,
+              event.returnValues.rftAddress,
+              event.returnValues.name,
+              event.returnValues.symbol,
+              event.returnValues.icoSharePrice,
+              event.returnValues.icoShareSupply,
+              event.returnValues.icoShareReserve,
+              event.returnValues.icoEnd,
+              event.returnValues.owner
+            );
+          }
+        });
+        rftc.events.Bought(async (error, event) => {
+          if (rftEventHandler && rftEventHandler.handleBought) {
+            rftEventHandler.handleBought(
+              error,
+              event.returnValues.nftAddress,
+              event.returnValues.tokenId,
+              event.returnValues.rftAddress,
+              event.returnValues.name,
+              event.returnValues.symbol,
+              event.returnValues.buyerAddress,
+              event.returnValues.shareAmount
+            );
+          }
+        });
+
         return {
           nftAddress: value[0],
           tokenId: value[1],
@@ -43,11 +72,12 @@ const getRFTData = async (rftFactoryEventHandlers, rftEventHandlers) => {
           name: value[3],
           symbol: value[4],
           tokenPrice: value[5],
-          tokenSupply: value[6],
-          tokenReserve: value[7],
+          tokenSupply: web3.utils.fromWei(value[6]),
+          tokenReserve: web3.utils.fromWei(value[7]),
           icoEndDate: icoEndDate,
           ownerAddress: value[9],
-          // balance,
+          balance: value[10],
+          // rftc,
         };
       });
       return rfts;
@@ -74,26 +104,31 @@ const getMergedData = async (rftEventHandlers) => {
 };
 
 const filterMergedDataForAddress = async (allNftsMergedData) => {
-  let { accounts } = await connectToMetamask(null);
-  let nfts = [];
-  if (Array.isArray(allNftsMergedData)) {
-    nfts = allNftsMergedData.filter((nft) => {
-      if (nft.rft) {
-        console.log(nft.rft.ownerAddress);
-        return (
-          nft.rft.ownerAddress
-            .toLowerCase()
-            .localeCompare(accounts[0].toLowerCase()) === 0
-        );
-      } else {
-        console.log(nft.owner);
-        return (
-          nft.owner.toLowerCase().localeCompare(accounts[0].toLowerCase()) === 0
-        );
-      }
-    });
+  try {
+    let { accounts } = await connectToMetamask(null);
+    let nfts = [];
+    if (Array.isArray(allNftsMergedData)) {
+      nfts = allNftsMergedData.filter((nft) => {
+        if (nft.rft) {
+          // console.log(nft.rft.ownerAddress);
+          return (
+            nft.rft.ownerAddress
+              .toLowerCase()
+              .localeCompare(accounts[0].toLowerCase()) === 0
+          );
+        } else {
+          // console.log(nft.owner);
+          return (
+            nft.owner.toLowerCase().localeCompare(accounts[0].toLowerCase()) ===
+            0
+          );
+        }
+      });
+      return nfts;
+    }
+  } catch (error) {
+    console.error(error);
   }
-  return nfts;
 };
 
 export { getNFTData, getRFTData, getMergedData, filterMergedDataForAddress };
