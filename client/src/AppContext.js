@@ -16,6 +16,8 @@ class AppContextProvider extends React.Component {
     accounts: [],
   };
 
+  refreshSet = new Set();
+
   async componentDidMount() {
     let nftc = setupNFTContract(this.getNFTEventHandlers());
     let rftfc = setupRFTFactoryContract(this.getRFTFactoryEventHandlers());
@@ -25,7 +27,7 @@ class AppContextProvider extends React.Component {
       rftfc: rftfc,
       accounts: accounts,
     });
-    await this.refresh();
+    await this.refresh("start");
   }
 
   getAccountsFromMetamask = async () => {
@@ -38,12 +40,18 @@ class AppContextProvider extends React.Component {
     }
   };
 
-  refresh = async () => {
-    let nfts = await getMergedData(this.getRFTEventHandlers());
-    EventEmitter.publish(DATA_LOADED_EVENT, nfts);
-    this.setState({
-      nfts: nfts,
-    });
+  refresh = async (transaction) => {
+    if (this.refreshSet.has(transaction)) {
+      return;
+    } else {
+      this.refreshSet.add(transaction);
+      console.log("CALLING REFRESH");
+      let nfts = await getMergedData(this.getRFTEventHandlers());
+      EventEmitter.publish(DATA_LOADED_EVENT, nfts);
+      this.setState({
+        nfts: nfts,
+      });
+    }
   };
 
   registerForUpdates = (handler) => {
@@ -131,8 +139,8 @@ class AppContextProvider extends React.Component {
     if (error) {
       console.error("New RFT event", error);
     } else {
-      console.log("rft", rft);
-      await this.refresh();
+      console.log("handleNewRFT rft", rft);
+      // await this.refresh();
     }
   };
 
@@ -154,9 +162,9 @@ class AppContextProvider extends React.Component {
     if (error) {
       console.error("Minted event", error);
     } else {
-      console.log("tokenId", tokenId);
-      console.log("minter", minter);
-      await this.refresh();
+      console.log("handleMinted tokenId", tokenId);
+      console.log("handleMinted minter", minter);
+      await this.refresh(tokenId.transactionHash);
     }
   };
 
@@ -164,9 +172,9 @@ class AppContextProvider extends React.Component {
     if (error) {
       console.error("Burnt event", error);
     } else {
-      console.log("tokenId", tokenId);
-      console.log("minter", minter);
-      await this.refresh();
+      console.log("handleBurnt tokenId", tokenId);
+      console.log("handleBurnt minter", minter);
+      // await this.refresh();
     }
   };
 
@@ -174,17 +182,8 @@ class AppContextProvider extends React.Component {
     if (error) {
       console.error("TokenURIUpdated event", error);
     } else {
-      console.log("tokenId", tokenId);
-      console.log("minter", minter);
-    }
-  };
-
-  handleCreateNFTReciept = (error, receipt) => {
-    if (error) {
-      console.error("CreateNFT ", error);
-    } else {
-      console.log(receipt.transactionHash);
-      this.getNFTS();
+      console.log("handleTokenURIUpdated tokenId", tokenId);
+      console.log("handleTokenURIUpdated minter", minter);
     }
   };
 

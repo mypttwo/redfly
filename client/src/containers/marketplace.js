@@ -16,7 +16,7 @@ class Marketplace extends React.Component {
     nfts: [],
     loading: true,
     search: "",
-    icoFilter: IcoFilter.filters[IcoFilter.LIVE],
+    icoFilter: IcoFilter.filters[IcoFilter.ALL],
   };
 
   async componentDidMount() {

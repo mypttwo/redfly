@@ -56,9 +56,11 @@ class Main extends React.Component {
                 </svg>
               </div> */}
               <div>
-                <h2 className="text-warning">Mint NFTs</h2>
+                <h2 className="text-warning">
+                  Showcase your content on the blockchain
+                </h2>
                 <p>
-                  Red Fly helps you to create art work on the blockchain as Non
+                  Red Fly helps you create art work on the blockchain as Non
                   Fungible Tokens (NFT).
                 </p>
                 <p>
@@ -85,7 +87,7 @@ class Main extends React.Component {
                 </svg>
               </div> */}
               <div>
-                <h2 className="text-warning">Sell shares of NFTs</h2>
+                <h2 className="text-warning">Sell shares of your content</h2>
                 <p>
                   Red Fly offers a unique way of further monetizing your content
                   by helping you sell shares (or coins) of your NFT.
@@ -117,7 +119,7 @@ class Main extends React.Component {
                 </svg>
               </div> */}
               <div>
-                <h2 className="text-warning">Buy and Trade Coins</h2>
+                <h2 className="text-warning">Buy and Trade shares</h2>
                 <p>
                   If you are a buyer Red Fly offers a simple and unique way to
                   build a valuable portfolio of NFT related coins.

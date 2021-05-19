@@ -11,19 +11,21 @@ import instagram from "../svg/instagram.svg";
 import facebook from "../svg/facebook.svg";
 import person from "../svg/person.svg";
 import reddit from "../svg/reddit.svg";
+import youtube from "../svg/youtube.svg";
 
 class NFTForm extends React.Component {
   state = {
     url: "",
     name: "",
     description: "",
-    processing: false, // show PUBLISH button
+    getSocialJSX: false, // show PUBLISH button
     rows: [{}], // link urls
     disableActionButton: false,
     twitter: "",
     instagram: "",
     facebook: "",
     reddit: "",
+    youtube: "",
     website: "",
   };
 
@@ -72,7 +74,7 @@ class NFTForm extends React.Component {
     if (error) {
       console.error("CreateNFT ", error);
       this.setState({
-        processing: false,
+        getSocialJSX: false,
       });
     } else {
       console.log(receipt.transactionHash);
@@ -85,13 +87,9 @@ class NFTForm extends React.Component {
         instagram: "",
         website: "",
         reddit: "",
-        processing: false,
+        getSocialJSX: false,
       });
     }
-  };
-  publish_ = async () => {
-    console.log(this.state.rows);
-    let { accounts } = await connectToMetamask();
   };
 
   getTokenInfo = () => {
@@ -129,6 +127,12 @@ class NFTForm extends React.Component {
       tokenInfo.links.push({
         name: "reddit",
         url: this.state.reddit,
+      });
+    }
+    if (this.state.youtube) {
+      tokenInfo.links.push({
+        name: "youtube",
+        url: this.state.youtube,
       });
     }
 
@@ -293,6 +297,22 @@ class NFTForm extends React.Component {
         </div>
         <div className="input-group flex-nowrap">
           <span className="input-group-text" id="addon-wrapping">
+            <img src={youtube} alt="youtube" />
+          </span>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Example : https://youtube.com/you"
+            value={this.state.youtube}
+            name="youtube"
+            onChange={this.handleChange}
+          />
+        </div>
+        <div id="image-help" className="form-text mb-2">
+          Optional. You can add your Youtube handle here.
+        </div>
+        <div className="input-group flex-nowrap">
+          <span className="input-group-text" id="addon-wrapping">
             <img src={reddit} alt="reddit" />
           </span>
           <input
@@ -350,65 +370,71 @@ class NFTForm extends React.Component {
       );
     }
     return (
-      <form>
-        <div className="mb-3">
-          <label htmlFor="image-url" className="form-label">
-            URL of the art work
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="image-url"
-            placeholder="Example : http://somewhere.com/photos/mymasterpiece.png"
-            value={this.state.url}
-            name="url"
-            onChange={this.handleChange}
-          />
-          <div id="image-help" className="form-text">
-            Specify the link of the art work itself. Not the page where its
-            available.
+      <div className="container">
+        <div className="row">
+          <div className="col">
+            <form>
+              <div className="mb-3">
+                <label htmlFor="image-url" className="form-label">
+                  URL of the art work
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="image-url"
+                  placeholder="Example : http://somewhere.com/photos/mymasterpiece.png"
+                  value={this.state.url}
+                  name="url"
+                  onChange={this.handleChange}
+                />
+                <div id="image-help" className="form-text">
+                  Specify the link of the art work itself. Not the page where
+                  its available.
+                </div>
+              </div>
+              <div className="mb-3">
+                <label htmlFor="name" className="form-label">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="name"
+                  name="name"
+                  placeholder="Example : My Masterpiece"
+                  value={this.state.name}
+                  onChange={this.handleChange}
+                />
+                <div id="name-help" className="form-text">
+                  Enter the title of the art work. This will be public. See
+                  Guidelines for further details.
+                </div>
+              </div>
+              <div className="mb-3">
+                <label htmlFor="desc" className="form-label">
+                  Description
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="desc"
+                  name="description"
+                  placeholder="Example : This is the most awesome NFT!"
+                  value={this.state.description}
+                  onChange={this.handleChange}
+                />
+                <div id="desc-help" className="form-text">
+                  Enter the description of the NFT. This will be public. See
+                  Guidelines for further details.
+                </div>
+              </div>
+              {this.getSocialMediaLinks()}
+              {/* {this.getLinksTable()} */}
+              {btnJSX}
+            </form>
           </div>
         </div>
-        <div className="mb-3">
-          <label htmlFor="name" className="form-label">
-            Title
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="name"
-            name="name"
-            placeholder="Example : My Masterpiece"
-            value={this.state.name}
-            onChange={this.handleChange}
-          />
-          <div id="name-help" className="form-text">
-            Enter the title of the art work. This will be public. See Guidelines
-            for further details.
-          </div>
-        </div>
-        <div className="mb-3">
-          <label htmlFor="desc" className="form-label">
-            Description
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="desc"
-            name="description"
-            placeholder="Example : This is the most awesome NFT!"
-            value={this.state.description}
-            onChange={this.handleChange}
-          />
-          <div id="desc-help" className="form-text">
-            Enter the description of the NFT. This will be public. See
-            Guidelines for further details.
-          </div>
-        </div>
-        {this.getSocialMediaLinks()}
-        {/* {this.getLinksTable()} */}
-        {btnJSX}
-      </form>
+      </div>
     );
   }
 }

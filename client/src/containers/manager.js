@@ -8,7 +8,8 @@ import MetamaskConnectWarning from "./metamaskConnectWarning";
 
 import { filterMergedDataForAddress } from "../utils/contractData";
 import IcoSetupForm from "./icoSetupForm";
-import NFTForm from "./nftForm";
+
+import NFTWizard from "./nftWizard";
 
 class Manager extends React.Component {
   state = {
@@ -60,7 +61,7 @@ class Manager extends React.Component {
         </div>
         <div className={this.state.collapse} id="collapseCreate">
           <div className="card card-body shadow">
-            <NFTForm />
+            <NFTWizard></NFTWizard>
           </div>
         </div>
       </React.Fragment>

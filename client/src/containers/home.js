@@ -136,14 +136,14 @@ class Home extends React.Component {
                     Manage my NFTs/ICOs
                   </button>
                 </li>
-                <li className="nav-item">
+                {/* <li className="nav-item">
                   <button
                     className={`btn btn-link border-0  ${portActive}`}
                     onClick={() => this.gotoPage(PORTFOLIO)}
                   >
                     Portfolio
                   </button>
-                </li>
+                </li> */}
               </ul>
               <form className="d-flex">{accountsJSX}</form>
             </div>
