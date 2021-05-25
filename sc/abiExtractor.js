@@ -2,7 +2,7 @@
 
 const fs = require("fs");
 
-fs.readFile("./build/contracts/RFT.json", "utf8", (err, data) => {
+fs.readFile("./build/contracts/RFTFactory.json", "utf8", (err, data) => {
   if (err) {
     console.error(err);
   } else {

@@ -11,7 +11,7 @@ const getFooterJSX = (nft) => {
     return (
       <small>
         <a
-          className=""
+          className="font-monospace"
           href={getBlockchainURL(nft.rft.rftAddress)}
           target="_blank"
         >
@@ -20,17 +20,31 @@ const getFooterJSX = (nft) => {
       </small>
     );
   }
-  return <small>{getMaskedAddress(nft.owner)}</small>;
+  return (
+    <small className="font-monospace">{getMaskedAddress(nft.owner)}</small>
+  );
 };
 
 const ArtworkCollectionMasonry = (props) => {
   let nftJSX = props.nfts.map((nft, index) => {
+    let priceJSX = "";
+    if (nft.rft && nft.rft.tokenPrice) {
+      priceJSX = (
+        <span className="fs-6 badge bg-warning text-primary">
+          {nft.rft.tokenPrice} DAI
+        </span>
+      );
+    }
     return (
       <div className="card" key={index}>
         <div className="shadow rounded p-1 ">
           <Artifact nft={nft} />
           <div className="card-body">
-            <h5 className="card-title">{nft.name}</h5>
+            <div className="d-flex justify-content-between align-items-center">
+              <div className="h5 card-title mr-2">{nft.name}</div>
+              {priceJSX}
+            </div>
+
             <p className="card-title">{nft.desc}</p>
             <Links nft={nft} />
           </div>

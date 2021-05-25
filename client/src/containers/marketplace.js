@@ -4,7 +4,6 @@ import withAppContext from "../hocs/withAppContext";
 import ArtworkCollectionMasonry from "../components/masonry";
 import Search from "../components/search";
 import IcoManager, { PAGETYPE } from "./icoManager";
-import MetamaskConnectWarning from "./metamaskConnectWarning";
 
 import Loader from "react-loader-spinner";
 import IcoDropdown from "./icoDropdown";
@@ -107,7 +106,6 @@ class Marketplace extends React.Component {
 
     return (
       <div className="container">
-        <MetamaskConnectWarning />
         {this.getControls()}
         <ArtworkCollectionMasonry nfts={nfts}>
           {this.getChildrenJSX(nfts)}

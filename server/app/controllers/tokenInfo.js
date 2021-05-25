@@ -3,6 +3,7 @@
 const express = require("express");
 const router = express.Router();
 const bodyParser = require("body-parser");
+const cors = require("cors")();
 
 const { ipfsKey, ipfsSecretKey } = require("../config");
 const pinataSDK = require("@pinata/sdk");
@@ -10,6 +11,7 @@ const pinata = pinataSDK(ipfsKey, ipfsSecretKey);
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
+router.use(cors);
 
 router.post("", (req, res) => {
   if (!req.body.name) {

@@ -20,27 +20,19 @@ const setupNFTContract = (eventHandler) => {
 
   nftc.events.Burnt(async (error, event) => {
     if (eventHandler && eventHandler.handleBurnt) {
-      eventHandler.handleBurnt(
-        error,
-        event.returnValues.tokenId,
-        event.returnValues.minter
-      );
+      eventHandler.handleBurnt(error, event);
     }
   });
 
   nftc.events.TokenURIUpdated(async (error, event) => {
     if (eventHandler && eventHandler.handleTokenURIUpdated) {
-      eventHandler.handleTokenURIUpdated(
-        error,
-        event.returnValues.tokenId,
-        event.returnValues.minter
-      );
+      eventHandler.handleTokenURIUpdated(error, event);
     }
   });
 
   nftc.events.FeesUpdated(async (error, event) => {
     if (eventHandler && eventHandler.handleFeesUpdated) {
-      eventHandler.handleFeesUpdated(error, event.returnValues.fees);
+      eventHandler.handleFeesUpdated(error, event);
     }
   });
 
@@ -70,6 +62,22 @@ const createNFT = async (nftc, tokenUri, recieptHandler) => {
           //   console.log("receipt :" + receipt);
           recieptHandler(error, receipt);
         });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+};
+
+const getApproved = async (nftc, tokenId) => {
+  let { accounts } = await connectToMetamask(null);
+
+  if (accounts.length) {
+    try {
+      let approved = await nftc.methods
+        .getApproved(tokenId)
+        .call({ from: accounts[0] });
+      console.log(approved);
+      return approved;
     } catch (error) {
       console.error(error);
     }
@@ -167,4 +175,5 @@ export {
   getAllNFTS,
   withdraw,
   approveTransferOfTokenFromNFTToRFT,
+  getApproved,
 };

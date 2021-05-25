@@ -37,6 +37,7 @@ class IcoManager extends React.Component {
       let rftc = new web3.eth.Contract(rftABI, this.props.nft.rft.rftAddress);
 
       rftc.events.Bought(async (error, event) => {
+        console.log("Bought!");
         let balance = await rftc.methods.balanceOf(accounts[0]).call();
         let totalSupply = await rftc.methods.totalSupply().call();
         console.log(this.props.nft.rft.rftAddress, balance);

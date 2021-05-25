@@ -9,13 +9,7 @@ const setupRFTFactoryContract = (eventHandler) => {
   //setup events here
   rftfc.events.NewRFT(async (error, event) => {
     if (eventHandler && eventHandler.handleNewRFT) {
-      eventHandler.handleNewRFT(
-        null,
-        event.returnValues.rft,
-        event.returnValues.creator,
-        event.returnValues.nft,
-        event.returnValues.tokenId
-      );
+      eventHandler.handleNewRFT(error, event);
     }
   });
 

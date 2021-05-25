@@ -1,6 +1,9 @@
 import detectEthereumProvider from "@metamask/detect-provider";
 
-const connectToMetamask = async (accountsChangedHandler) => {
+const connectToMetamask = async (
+  accountsChangedHandler,
+  networkChangedHandler
+) => {
   try {
     let provider = await detectEthereumProvider();
 
@@ -9,14 +12,26 @@ const connectToMetamask = async (accountsChangedHandler) => {
         method: "eth_requestAccounts",
       });
 
+      let network = await provider.request({
+        method: "eth_chainId",
+      });
+
+      if (networkChangedHandler) {
+        provider.on("chainChanged", (chainId) => {
+          networkChangedHandler(chainId);
+        });
+      }
+
       if (accountsChangedHandler)
         provider.on("accountsChanged", (connectInfo) => {
+          console.log(connectInfo);
           accountsChangedHandler(connectInfo);
         });
 
       return {
         provider,
         accounts,
+        network,
       };
     } else {
       console.log("Please install MetaMask!");

@@ -4,7 +4,6 @@ import withAppContext from "../hocs/withAppContext";
 import ArtworkCollectionMasonry from "../components/masonry";
 import Search from "../components/search";
 import IcoManager, { PAGETYPE } from "./icoManager";
-import MetamaskConnectWarning from "./metamaskConnectWarning";
 
 import { filterMergedDataForAddress } from "../utils/contractData";
 import IcoSetupForm from "./icoSetupForm";
@@ -60,7 +59,7 @@ class Manager extends React.Component {
           <div className="col-8">{this.getSearch()}</div>
         </div>
         <div className={this.state.collapse} id="collapseCreate">
-          <div className="card card-body shadow">
+          <div>
             <NFTWizard></NFTWizard>
           </div>
         </div>
@@ -110,7 +109,6 @@ class Manager extends React.Component {
     return (
       <div>
         <div className="container">
-          <MetamaskConnectWarning />
           {this.getCreateNFTJSX()}
           <ArtworkCollectionMasonry nfts={nfts}>
             {this.getChildrenJSX(nfts)}

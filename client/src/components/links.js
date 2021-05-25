@@ -18,7 +18,7 @@ const linksJSX = (props) => {
     if (twitterLinks.length) {
       twitterJSX = (
         <a
-          className="btn btn-outline-light btn-sm border-0"
+          className="btn btn-light btn-sm border-0"
           href={twitterLinks[0].url}
           target="_blank"
         >
@@ -32,7 +32,7 @@ const linksJSX = (props) => {
     if (instaLinks.length) {
       instaJSX = (
         <a
-          className="btn btn-outline-light btn-sm border-0"
+          className="btn btn-light btn-sm border-0"
           href={instaLinks[0].url}
           target="_blank"
         >
@@ -46,7 +46,7 @@ const linksJSX = (props) => {
     if (fbLinks.length) {
       fbJSX = (
         <a
-          className="btn btn-outline-light btn-sm border-0"
+          className="btn btn-light btn-sm border-0"
           href={fbLinks[0].url}
           target="_blank"
         >
@@ -60,7 +60,7 @@ const linksJSX = (props) => {
     if (websiteLinks.length) {
       websiteJSX = (
         <a
-          className="btn btn-outline-light btn-sm border-0"
+          className="btn btn-light btn-sm border-0"
           href={websiteLinks[0].url}
           target="_blank"
         >
@@ -74,7 +74,7 @@ const linksJSX = (props) => {
     if (youtubeLinks.length) {
       youtubeJSX = (
         <a
-          className="btn btn-outline-light btn-sm border-0"
+          className="btn btn-light btn-sm border-0"
           href={youtubeLinks[0].url}
           target="_blank"
         >
@@ -84,7 +84,7 @@ const linksJSX = (props) => {
     }
   }
   return (
-    <div className="d-flex justify-content-around">
+    <div className="d-flex justify-content-around pt-3">
       {twitterJSX}
       {instaJSX}
       {fbJSX}

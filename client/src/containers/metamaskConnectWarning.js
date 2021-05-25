@@ -13,6 +13,7 @@ class MetamaskConnectWarning extends React.Component {
     let displayConnectWarning = true;
     try {
       let { accounts } = await connectToMetamask(this.accountsChangedHandler);
+      console.log(accounts);
       if (accounts && accounts.length) {
         displayConnectWarning = false;
       }
@@ -26,13 +27,17 @@ class MetamaskConnectWarning extends React.Component {
 
   accountsChangedHandler = (connectInfo) => {
     console.log("Metamask accountsChanged!");
-    console.log(JSON.stringify(connectInfo));
+    if (Array.isArray(connectInfo) && connectInfo.length) {
+      this.setState({
+        displayConnectWarning: false,
+      });
+    }
   };
 
   render() {
     if (this.state.displayConnectWarning) {
       return (
-        <div className="alert alert-dismissible alert-warning text-dark">
+        <div className="alert alert-dismissible alert-warning">
           <button
             type="button"
             className="btn-close"

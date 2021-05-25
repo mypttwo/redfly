@@ -89,7 +89,7 @@ class BuyCoinForm extends React.Component {
   render() {
     return (
       <form className="container  p-3">
-        <div className="row">
+        {/* <div className="row">
           <div className="col">
             <input
               type="text"
@@ -120,12 +120,59 @@ class BuyCoinForm extends React.Component {
               />
             </div>
           )}
+        </div> */}
+        <div className="row">
+          <div className="col">
+            <div class="input-group mb-3">
+              <input
+                type="text"
+                class="form-control"
+                name="numberOfCoins"
+                placeholder="10"
+                value={this.state.numberOfCoins}
+                onChange={this.handleChange}
+              />
+              <div class="input-group-append">
+                {this.state.enableActionButton ? (
+                  <button
+                    class="btn btn-primary"
+                    type="button"
+                    onClick={this.buy}
+                  >
+                    Buy
+                  </button>
+                ) : (
+                  <button
+                    class="btn btn-primary disabled"
+                    type="button"
+                    onClick={this.buy}
+                  >
+                    <Loader
+                      type="ThreeDots"
+                      color="#00BFFF"
+                      timeout={60000} //3 secs
+                      height={20}
+                      width={20}
+                    />
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
         <div className="row">
           <div className="text-warning">{this.state.statusMessage}</div>
-          <div className="col-md-auto pt-3 text-danger">
-            Metamask will prompt you twice to complete the buy.
-          </div>
+          {this.state.enableActionButton ? (
+            ""
+          ) : (
+            <div className="col-md-auto pt-3 text-danger">
+              Metamask will prompt you{" "}
+              <span className="fst-italic text-decoration-underline">
+                twice
+              </span>{" "}
+              to complete the action.
+            </div>
+          )}
         </div>
       </form>
     );

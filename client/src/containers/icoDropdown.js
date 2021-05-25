@@ -49,7 +49,7 @@ class IcoDropdown extends Component {
               <div className="downshift-dropdown ">
                 {IcoFilter.filters.map((item, index) => (
                   <div
-                    className="dropdown-item text-light border-secondary bg-dark"
+                    className="dropdown-item border-secondary bg-light text-primary"
                     {...getItemProps({ key: index, index, item })}
                     style={{
                       //   borderBottom: `1px solid #EEE`,

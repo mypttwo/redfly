@@ -29,7 +29,6 @@ const abi = [
     outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -52,7 +51,6 @@ const abi = [
     outputs: [{ internalType: "address[]", name: "", type: "address[]" }],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
 ];
 

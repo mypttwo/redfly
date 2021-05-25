@@ -38,7 +38,9 @@ const nftFilter = (nfts, search, icoFilter) => {
     (nft) =>
       isNFTinFilter(nft, icoFilter) &&
       (nft.name.toLowerCase().includes(search.toLowerCase()) ||
-        nft.desc.toLowerCase().includes(search.toLowerCase()))
+        nft.desc.toLowerCase().includes(search.toLowerCase()) ||
+        (nft.rft &&
+          nft.rft.symbol.toLowerCase().includes(search.toLowerCase())))
   );
 };
 

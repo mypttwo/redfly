@@ -3,6 +3,7 @@ import logo from "../logo.svg";
 import chevron from "../svg/chevron-double-right.svg";
 import "../App.css";
 import { MARKET_PLACE, MANAGER } from "./home";
+import Banner from "./banner";
 
 class Main extends React.Component {
   render() {
@@ -12,10 +13,19 @@ class Main extends React.Component {
           <img className="d-block mx-auto mb-4" src={logo} alt="" />
           <h1 className="display-5 fw-bold text-warning">Red Fly</h1>
           <div className="col-lg-6 mx-auto">
-            <p className="lead mb-4">
-              Showcase your work on the blockchain. Mint and distribute your own
-              coins. Collect rare artifacts and trade coins.
+            <p className="lead mb-4 font-monospace text-success mt-3">
+              <Banner
+                strings={[
+                  "Showcase your work on the blockchain. ",
+                  "Mint and distribute your own coins.",
+                  "Collect rare artifacts and trade coins.",
+                  "<span class=' text-warning'>Red Fly</span>",
+                  "The confluence of technology and the future.",
+                  "And you.",
+                ]}
+              />
             </p>
+
             {/* <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
               <button
                 type="button"
@@ -67,16 +77,13 @@ class Main extends React.Component {
                   With one click you can easily mint new NFTs and your content
                   will become sellable globally on decentralized marketplaces.
                 </p>
-                <p>
-                  Also connect your social media handles to allow buyers to
-                  follow and interact with you.
-                </p>
+
                 <a
                   href="#"
-                  className="btn btn-warning "
+                  className="btn btn-warning text-primary"
                   onClick={() => this.props.gotoPage(MANAGER)}
                 >
-                  Manage my NFTs/ICOs
+                  Create an NFT
                 </a>
               </div>
             </div>
@@ -93,11 +100,9 @@ class Main extends React.Component {
                   by helping you sell shares (or coins) of your NFT.
                 </p>
                 <p>
-                  Launching an Initial Coin Offering (ICO) for your NFT is easy
-                  in Red Fly. Decide the number of coins to be issued and the
-                  price of the coin amongst other details. With one click you
-                  can create your own unique coin on the blockchain and give
-                  buyers a chance to buy a share of your valuable NFT.
+                  With one click you can create your own unique coin on the
+                  blockchain and give buyers a chance to buy a share of your
+                  valuable NFT.
                 </p>
                 <p>
                   And of course, withdraw your earnings when you feel the time
@@ -105,10 +110,10 @@ class Main extends React.Component {
                 </p>
                 <a
                   href="#"
-                  className="btn btn-warning"
+                  className="btn btn-warning  text-primary"
                   onClick={() => this.props.gotoPage(MANAGER)}
                 >
-                  Manage my NFTs/ICOs
+                  Start an ICO
                 </a>
               </div>
             </div>
@@ -126,15 +131,18 @@ class Main extends React.Component {
                 </p>
                 <p>
                   Invest early in ICOs and trade these coins on popular
-                  decentralized exchanges. You can also follow your favorite
-                  content creators via social media and interact with them.
+                  decentralized exchanges.
+                </p>
+                <p>
+                  You can also follow your favorite content creators via social
+                  media and interact with them.
                 </p>
                 <a
                   href="#"
-                  className="btn btn-warning "
+                  className="btn btn-warning  text-primary"
                   onClick={() => this.props.gotoPage(MARKET_PLACE)}
                 >
-                  Marketplace
+                  Buy Coins
                 </a>
               </div>
             </div>

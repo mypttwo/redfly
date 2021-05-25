@@ -14,20 +14,25 @@ class AppContextProvider extends React.Component {
     nftc: null,
     rftfc: null,
     accounts: [],
+    stylePath: "",
   };
 
   refreshSet = new Set();
 
   async componentDidMount() {
-    let nftc = setupNFTContract(this.getNFTEventHandlers());
-    let rftfc = setupRFTFactoryContract(this.getRFTFactoryEventHandlers());
-    let accounts = await this.getAccountsFromMetamask();
-    this.setState({
-      nftc: nftc,
-      rftfc: rftfc,
-      accounts: accounts,
-    });
-    await this.refresh("start");
+    try {
+      let nftc = setupNFTContract(this.getNFTEventHandlers());
+      let rftfc = setupRFTFactoryContract(this.getRFTFactoryEventHandlers());
+      let accounts = await this.getAccountsFromMetamask();
+      this.setState({
+        nftc: nftc,
+        rftfc: rftfc,
+        accounts: accounts,
+      });
+      await this.refresh("start");
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   getAccountsFromMetamask = async () => {
@@ -46,16 +51,26 @@ class AppContextProvider extends React.Component {
     } else {
       this.refreshSet.add(transaction);
       console.log("CALLING REFRESH");
-      let nfts = await getMergedData(this.getRFTEventHandlers());
-      EventEmitter.publish(DATA_LOADED_EVENT, nfts);
-      this.setState({
-        nfts: nfts,
-      });
+      try {
+        let nfts = await getMergedData(this.getRFTEventHandlers());
+        EventEmitter.publish(DATA_LOADED_EVENT, nfts);
+        this.setState({
+          nfts: nfts,
+        });
+      } catch (error) {
+        console.error("refresh", error);
+      }
     }
   };
 
   registerForUpdates = (handler) => {
     EventEmitter.subscribe(DATA_LOADED_EVENT, handler);
+  };
+
+  setStylePath = (stylePath) => {
+    this.setState({
+      stylePath: stylePath,
+    });
   };
 
   render() {
@@ -67,6 +82,8 @@ class AppContextProvider extends React.Component {
           nftc: this.state.nftc,
           rftfc: this.state.rftfc,
           accounts: this.state.accounts,
+          stylePath: this.state.stylePath,
+          setStylePath: this.setStylePath,
         }}
       >
         {this.props.children}
@@ -135,11 +152,15 @@ class AppContextProvider extends React.Component {
     };
   };
 
-  handleNewRFT = async (error, rft, creator, nft, tokenId) => {
+  handleNewRFT = async (error, event) => {
     if (error) {
       console.error("New RFT event", error);
     } else {
-      console.log("handleNewRFT rft", rft);
+      console.log("handleNewRFT rft", event.returnValues.rft);
+      console.log("handleNewRFT creator", event.returnValues.creator);
+      console.log("handleNewRFT nft", event.returnValues.nft);
+      console.log("handleNewRFT tokenId", event.returnValues.tokenId);
+
       // await this.refresh();
     }
   };
@@ -150,40 +171,40 @@ class AppContextProvider extends React.Component {
     };
   };
 
-  handleFeesUpdated = (error, fees) => {
+  handleFeesUpdated = (error, event) => {
     if (error) {
       console.error("FeesUpdated event", error);
     } else {
-      console.log("fees", fees);
+      console.log("fees", event.returnValues.fees);
     }
   };
 
-  handleMinted = async (error, tokenId, minter) => {
+  handleMinted = async (error, event) => {
     if (error) {
       console.error("Minted event", error);
     } else {
-      console.log("handleMinted tokenId", tokenId);
-      console.log("handleMinted minter", minter);
-      await this.refresh(tokenId.transactionHash);
+      console.log("handleMinted tokenId", event.returnValues.tokenId);
+      console.log("handleMinted minter", event.returnValues.minter);
+      // await this.refresh(tokenId.transactionHash);
     }
   };
 
-  handleBurnt = async (error, tokenId, minter) => {
+  handleBurnt = async (error, event) => {
     if (error) {
       console.error("Burnt event", error);
     } else {
-      console.log("handleBurnt tokenId", tokenId);
-      console.log("handleBurnt minter", minter);
+      console.log("handleBurnt tokenId", event.returnValues.tokenId);
+      console.log("handleBurnt minter", event.returnValues.minter);
       // await this.refresh();
     }
   };
 
-  handleTokenURIUpdated = (error, tokenId, minter) => {
+  handleTokenURIUpdated = (error, event) => {
     if (error) {
       console.error("TokenURIUpdated event", error);
     } else {
-      console.log("handleTokenURIUpdated tokenId", tokenId);
-      console.log("handleTokenURIUpdated minter", minter);
+      console.log("handleTokenURIUpdated tokenId", event.returnValues.tokenId);
+      console.log("handleTokenURIUpdated minter", event.returnValues.minter);
     }
   };
 

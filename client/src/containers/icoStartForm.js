@@ -33,7 +33,10 @@ class IcoStartForm extends React.Component {
   nftTransferApprovalHandler = (error, reciept) => {
     if (error) {
       console.error("nftTransferApprovalHandler", error);
-      this.setState({ statusMessage: "", enableActionButton: true });
+      this.setState({
+        statusMessage: "Oops! There was an error! Try again... ",
+        enableActionButton: true,
+      });
     } else {
       startIco(
         this.state.days,
@@ -65,15 +68,20 @@ class IcoStartForm extends React.Component {
       this.props.nft.rft.tokenId,
       this.nftTransferApprovalHandler
     );
+    // startIco(
+    //   this.state.days,
+    //   this.props.nft.rft.rftAddress,
+    //   this.startIcoRecieptHandler
+    // );
     this.setState({
-      statusMessage: "Launching the ICO. This will take a while...",
+      statusMessage: "Launching the ICO. This may take a couple of minutes...",
       enableActionButton: false,
     });
   };
   render() {
     return (
       <React.Fragment>
-        <div className="container text-info border border-dark p-3 ">
+        <div className="container text-info  p-3 ">
           <div className="row">
             <label htmlFor="days" className="col-sm-8 col-form-label">
               Duration in days
@@ -106,8 +114,12 @@ class IcoStartForm extends React.Component {
 
           <div className="row p-3">
             <div className="text-warning">{this.state.statusMessage}</div>
-            <div className="col-md-auto pt-3 text-danger small">
-              Metamask will prompt you twice to complete the action.
+            <div className="col-md-auto pt-3 text-danger fw-bold">
+              Metamask will prompt you{" "}
+              <span className="fst-italic text-decoration-underline">
+                twice
+              </span>{" "}
+              to complete the action.
             </div>
           </div>
         </div>

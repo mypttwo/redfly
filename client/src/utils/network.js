@@ -10,4 +10,14 @@ const getBlockchainURL = (address) => {
   }
 };
 
-export { getBlockchainURL };
+const getNetworkId = () => {
+  switch (network) {
+    case "kovan":
+      return 42;
+
+    default:
+      break;
+  }
+};
+
+export { getBlockchainURL, getNetworkId };

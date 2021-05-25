@@ -4,6 +4,7 @@ import {
   createRFT,
 } from "../utils/rftFactoryContract";
 import { address as nftAddress } from "../utils/nftContractDef";
+import { getApproved } from "../utils/nftContract";
 import Loader from "react-loader-spinner";
 import withAppContext from "../hocs/withAppContext";
 
@@ -68,20 +69,22 @@ class IcoSetupForm extends React.Component {
       this.state.tokenReserve,
       this.createRFTRecieptHandler
     );
+
+    getApproved(this.props.appContext.nftc, this.props.nft.tokenId);
     this.setState({
-      statusMessage: "Setting up the ICO. This may take a while...",
+      statusMessage: "Setting up the ICO. This may take a couple of minutes...",
       enableActionButton: false,
     });
   };
 
   render = () => {
     let collapseTarget = `collapse${this.props.index}`;
-    console.log("index", this.props.index);
+    // console.log("index", this.props.index);
     return (
       <div>
         <p>
           <button
-            className="btn btn-dark text-info dropdown-toggle btn-block"
+            className="btn btn-secondary dropdown-toggle btn-block"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target={"#" + collapseTarget}

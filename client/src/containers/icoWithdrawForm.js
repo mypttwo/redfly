@@ -1,6 +1,7 @@
 import React from "react";
 import { getBalance } from "../utils/daiContract";
 import { withdrawDai } from "../utils/rftContract";
+import Loader from "react-loader-spinner";
 
 class IcoWithdrawForm extends React.Component {
   state = {
@@ -52,6 +53,7 @@ class IcoWithdrawForm extends React.Component {
         statusMessage: "",
         enableActionButton: true,
         balance,
+        amount: balance,
       });
     }
   };
@@ -70,14 +72,53 @@ class IcoWithdrawForm extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <div className="container text-info border border-dark p-3 ">
+        <div className="container pb-3 ">
           <div className="row">
             <label className="col-sm-8 col-form-label">Balance in DAI</label>
             <div className="col-sm-4 mt-2">{this.state.balance}</div>
           </div>
           <div className="row">
+            <div className="col">
+              <div class="input-group my-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="10"
+                  name="amount"
+                  value={this.state.amount}
+                  onChange={this.handleChange}
+                />
+                <div class="input-group-append">
+                  {this.state.enableActionButton ? (
+                    <button
+                      class="btn btn-primary"
+                      type="button"
+                      onClick={this.withdraw}
+                    >
+                      Withdraw
+                    </button>
+                  ) : (
+                    <button
+                      class="btn btn-primary disabled"
+                      type="button"
+                      // onClick={this.buy}
+                    >
+                      <Loader
+                        type="ThreeDots"
+                        color="#00BFFF"
+                        timeout={60000} //3 secs
+                        height={20}
+                        width={20}
+                      />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* <div className="row">
             <label htmlFor="amount" className="col-sm-8 col-form-label">
-              Amount in DAI
+              Withdraw Amount in DAI
             </label>
             <div className="col-sm-4 mt-2">
               <input
@@ -88,9 +129,9 @@ class IcoWithdrawForm extends React.Component {
                 onChange={this.handleChange}
               />
             </div>
-          </div>
+          </div> */}
 
-          {this.state.enableActionButton ? (
+          {/* {this.state.enableActionButton ? (
             <div className="row p-3">
               <button
                 className="btn btn-primary mt-2 my-2"
@@ -102,7 +143,7 @@ class IcoWithdrawForm extends React.Component {
             </div>
           ) : (
             ""
-          )}
+          )} */}
 
           <div className="row">
             <small className="text-warning">{this.state.statusMessage}</small>

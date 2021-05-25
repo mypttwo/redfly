@@ -65,7 +65,7 @@ class NFTWizard extends React.Component {
     return (
       <div>
         {this.getDetailsJSX()}
-        <div class="d-flex justify-content-end">
+        <div className="d-flex justify-content-end">
           <button
             type="button"
             className="btn btn-secondary"
@@ -81,7 +81,7 @@ class NFTWizard extends React.Component {
     return (
       <div>
         {this.getSocialJSX()}
-        <div class="d-flex justify-content-between">
+        <div className="d-flex justify-content-between">
           <button
             type="button"
             className="btn btn-secondary"
@@ -224,9 +224,9 @@ class NFTWizard extends React.Component {
     }
     return (
       <div>
-        <div className="h2 text-info">Preview</div>
+        <div className="h4 text-info">Preview</div>
 
-        <div class="d-flex justify-content-center">
+        <div className="d-flex justify-content-center">
           <div className="card shadow   " style={{ width: "22rem" }}>
             <div className="shadow rounded p-1 ">
               <Artifact nft={nft} />
@@ -242,9 +242,9 @@ class NFTWizard extends React.Component {
             </div>
           </div>
         </div>
-        <div class="d-flex justify-content-center">
+        <div className="d-flex justify-content-center">
           <div
-            class="alert alert-light mt-5"
+            className="alert alert-light mt-5"
             role="alert"
             style={{ width: "22rem" }}
           >
@@ -253,7 +253,7 @@ class NFTWizard extends React.Component {
             blockchain it will be very expensive to correct!
           </div>
         </div>
-        <div class="d-flex justify-content-between">
+        <div className="d-flex justify-content-between">
           <button
             type="button"
             className="btn btn-secondary"
@@ -284,7 +284,7 @@ class NFTWizard extends React.Component {
   getDetailsJSX = () => {
     return (
       <>
-        <div className="h2 text-info">Basic Details</div>
+        <div className="h4 text-info">Basic Details</div>
         <div className="h5">These fields are required.</div>
         <div className="mb-3">
           <label htmlFor="image-url" className="form-label">
@@ -345,7 +345,7 @@ class NFTWizard extends React.Component {
   getSocialJSX = () => {
     return (
       <>
-        <div className="h2 text-info">Social Media</div>
+        <div className="h4 text-info">Social Media</div>
         <div className="h5">These fields are optional.</div>
         <div className="mb-3">
           <div className="input-group flex-nowrap">
@@ -451,7 +451,16 @@ class NFTWizard extends React.Component {
   };
 
   render() {
-    return <div className="container">{this.getPage()}</div>;
+    return (
+      <div className="container">
+        <div className="card shadow">
+          <div className="card-header d-flex justify-content-center mb-3 h4">
+            Create NFT
+          </div>
+          <div className="card-body">{this.getPage()}</div>
+        </div>
+      </div>
+    );
   }
 }
 
