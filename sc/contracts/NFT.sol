@@ -20,7 +20,7 @@ contract NFT is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable{
     event TokenURIUpdated(uint256 tokenId, address minter);
     event Burnt(uint256 tokenId, address minter);
 
-    constructor(uint256 _fees) ERC721("Mypt NFT", "MNFT") {
+    constructor(uint256 _fees) ERC721("RedFly", "RFT") {
         fees = _fees;
     }
 
