@@ -19,7 +19,7 @@ class Main extends React.Component {
                   "Showcase your work on the blockchain. ",
                   "Mint and distribute your own coins.",
                   "Collect rare artifacts and trade coins.",
-                  "<span class=' text-warning'>Red Fly</span>",
+                  "<span className=' text-warning'>Red Fly</span>",
                   "The confluence of technology and the future.",
                   "And you.",
                 ]}
@@ -52,7 +52,7 @@ class Main extends React.Component {
                   width="16"
                   height="16"
                   fill="currentColor"
-                  class="bi bi-chevron-double-right mt-2"
+                  className="bi bi-chevron-double-right mt-2"
                   viewBox="0 0 16 16"
                 >
                   <path

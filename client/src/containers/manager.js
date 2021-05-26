@@ -58,9 +58,11 @@ class Manager extends React.Component {
           </div>
           <div className="col-8">{this.getSearch()}</div>
         </div>
-        <div className={this.state.collapse} id="collapseCreate">
-          <div>
-            <NFTWizard></NFTWizard>
+        <div className="row">
+          <div className="col">
+            <div className={this.state.collapse} id="collapseCreate">
+              <NFTWizard></NFTWizard>
+            </div>
           </div>
         </div>
       </React.Fragment>

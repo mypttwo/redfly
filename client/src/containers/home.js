@@ -152,7 +152,10 @@ class Home extends React.Component {
           id="darkModeSwitch"
           onClick={this.toggleDark}
         />
-        <label className="form-check-label text-secondary" for="darkModeSwitch">
+        <label
+          className="form-check-label text-secondary"
+          htmlFor="darkModeSwitch"
+        >
           <img
             src={this.state.stylePath.includes("flatly") ? light : dark}
             alt="website"
@@ -231,9 +234,9 @@ class Home extends React.Component {
                     Marketplace
                   </button>
                 </li>
-                <li class="nav-item dropdown">
+                <li className="nav-item dropdown">
                   <a
-                    class="nav-link dropdown-toggle show"
+                    className="nav-link dropdown-toggle show"
                     data-bs-toggle="dropdown"
                     href="#"
                     role="button"
@@ -242,16 +245,16 @@ class Home extends React.Component {
                   >
                     How to...
                   </a>
-                  <div class="dropdown-menu" data-bs-popper="none">
+                  <div className="dropdown-menu" data-bs-popper="none">
                     <a
-                      class="dropdown-item"
+                      className="dropdown-item"
                       href="#"
                       onClick={() => this.gotoPage(HOW_TO_GET_STARTED)}
                     >
                       Create an NFT and mint your own Coin
                     </a>
                     <a
-                      class="dropdown-item"
+                      className="dropdown-item"
                       href="#"
                       onClick={() => this.gotoPage(HOW_TO_WITHDRAW)}
                     >
@@ -291,13 +294,13 @@ class Home extends React.Component {
           <MetamaskConnectWarning></MetamaskConnectWarning>
         </div> */}
         <div className="mt-4">{page}</div>
-        <footer class="text-muted py-5">
-          <div class="container">
-            <p class="float-end mb-1">
+        <footer className="text-muted py-5">
+          <div className="container">
+            <p className="float-end mb-1">
               <a href="#">Back to top</a>
             </p>
-            <p class="mb-1">© Red Fly 2017–2021</p>
-            <p class="mb-0"></p>
+            <p className="mb-1">© Red Fly 2017–2021</p>
+            <p className="mb-0"></p>
           </div>
         </footer>
       </div>

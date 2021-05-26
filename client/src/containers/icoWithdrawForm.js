@@ -79,19 +79,19 @@ class IcoWithdrawForm extends React.Component {
           </div>
           <div className="row">
             <div className="col">
-              <div class="input-group my-3">
+              <div className="input-group my-3">
                 <input
                   type="text"
-                  class="form-control"
+                  className="form-control"
                   placeholder="10"
                   name="amount"
                   value={this.state.amount}
                   onChange={this.handleChange}
                 />
-                <div class="input-group-append">
+                <div className="input-group-append">
                   {this.state.enableActionButton ? (
                     <button
-                      class="btn btn-primary"
+                      className="btn btn-primary"
                       type="button"
                       onClick={this.withdraw}
                     >
@@ -99,7 +99,7 @@ class IcoWithdrawForm extends React.Component {
                     </button>
                   ) : (
                     <button
-                      class="btn btn-primary disabled"
+                      className="btn btn-primary disabled"
                       type="button"
                       // onClick={this.buy}
                     >

@@ -117,7 +117,7 @@ class AppContextProvider extends React.Component {
       console.log("icoShareReserve", icoShareReserve);
       console.log("icoEnd", icoEnd);
       console.log("owner", owner);
-      await this.refresh();
+      // await this.refresh();
     }
   };
 
@@ -141,7 +141,7 @@ class AppContextProvider extends React.Component {
       console.log("symbol", symbol);
       console.log("buyerAddress", buyerAddress);
       console.log("shareAmount", shareAmount);
-      await this.refresh();
+      // await this.refresh();
     }
   };
 
@@ -161,7 +161,7 @@ class AppContextProvider extends React.Component {
       console.log("handleNewRFT nft", event.returnValues.nft);
       console.log("handleNewRFT tokenId", event.returnValues.tokenId);
 
-      // await this.refresh();
+      await this.refresh(event.transactionHash);
     }
   };
 
@@ -183,9 +183,10 @@ class AppContextProvider extends React.Component {
     if (error) {
       console.error("Minted event", error);
     } else {
+      console.log(JSON.stringify(event));
       console.log("handleMinted tokenId", event.returnValues.tokenId);
       console.log("handleMinted minter", event.returnValues.minter);
-      // await this.refresh(tokenId.transactionHash);
+      await this.refresh(event.transactionHash);
     }
   };
 
@@ -195,16 +196,17 @@ class AppContextProvider extends React.Component {
     } else {
       console.log("handleBurnt tokenId", event.returnValues.tokenId);
       console.log("handleBurnt minter", event.returnValues.minter);
-      // await this.refresh();
+      await this.refresh(event.transactionHash);
     }
   };
 
-  handleTokenURIUpdated = (error, event) => {
+  handleTokenURIUpdated = async (error, event) => {
     if (error) {
       console.error("TokenURIUpdated event", error);
     } else {
       console.log("handleTokenURIUpdated tokenId", event.returnValues.tokenId);
       console.log("handleTokenURIUpdated minter", event.returnValues.minter);
+      await this.refresh(event.transactionHash);
     }
   };
 

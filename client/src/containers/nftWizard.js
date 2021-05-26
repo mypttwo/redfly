@@ -452,13 +452,11 @@ class NFTWizard extends React.Component {
 
   render() {
     return (
-      <div className="container">
-        <div className="card shadow">
-          <div className="card-header d-flex justify-content-center mb-3 h4">
-            Create NFT
-          </div>
-          <div className="card-body">{this.getPage()}</div>
+      <div className="card shadow">
+        <div className="card-header d-flex justify-content-center mb-3 h4">
+          Create NFT
         </div>
+        <div className="card-body">{this.getPage()}</div>
       </div>
     );
   }

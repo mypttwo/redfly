@@ -123,19 +123,19 @@ class BuyCoinForm extends React.Component {
         </div> */}
         <div className="row">
           <div className="col">
-            <div class="input-group mb-3">
+            <div className="input-group mb-3">
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 name="numberOfCoins"
                 placeholder="10"
                 value={this.state.numberOfCoins}
                 onChange={this.handleChange}
               />
-              <div class="input-group-append">
+              <div className="input-group-append">
                 {this.state.enableActionButton ? (
                   <button
-                    class="btn btn-primary"
+                    className="btn btn-primary"
                     type="button"
                     onClick={this.buy}
                   >
@@ -143,7 +143,7 @@ class BuyCoinForm extends React.Component {
                   </button>
                 ) : (
                   <button
-                    class="btn btn-primary disabled"
+                    className="btn btn-primary disabled"
                     type="button"
                     onClick={this.buy}
                   >
