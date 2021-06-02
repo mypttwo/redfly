@@ -1,3 +1,5 @@
 /collateral
 /sc/abi.js
 /server/htmlList
+/client/.cert/
+/server/cert/

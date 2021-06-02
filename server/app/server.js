@@ -1,8 +1,8 @@
 "use strict";
 
-const { dbConnStr, port } = require("./config");
+const { dbConnStr, port, portSSL } = require("./config");
 const mongoose = require("mongoose");
-const server = require("./httpserver");
+const { server, serverSSL } = require("./httpserver");
 
 mongoose
   .connect(dbConnStr)
@@ -14,6 +14,13 @@ mongoose
         process.exit(0);
       }
       console.log(`Server started at ${port}`);
+    });
+    serverSSL.listen(portSSL, (err) => {
+      if (err) {
+        console.error(err, `Shutting down SSL server at ${portSSL}`);
+        process.exit(0);
+      }
+      console.log(`SSL Server started at ${portSSL}`);
     });
   })
   .catch((error) => {
