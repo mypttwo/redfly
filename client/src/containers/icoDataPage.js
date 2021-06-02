@@ -62,25 +62,25 @@ class IcoDataPage extends React.Component {
             </div>
 
             <div className="row py-3">
-              <div className="col" style={{ "text-align": "center" }}>
+              <div className="col" style={{ textAlign: "center" }}>
                 <span className="i">Issued</span>
 
                 <br />
                 <span className="i">{this.props.nft.rft.tokenSupply}</span>
               </div>
-              <div className="col" style={{ "text-align": "center" }}>
+              <div className="col" style={{ textAlign: "center" }}>
                 <span className="i">Reserved</span>
 
                 <br />
                 <span className="i">{this.props.nft.rft.tokenReserve}</span>
               </div>
-              <div className="col" style={{ "text-align": "center" }}>
+              <div className="col" style={{ textAlign: "center" }}>
                 <span className="i">Sold</span>
 
                 <br />
                 <span className="i">{this.props.totalSupply}</span>
               </div>
-              <div className="col" style={{ "text-align": "center" }}>
+              <div className="col" style={{ textAlign: "center" }}>
                 <span className="i">Bought</span>
                 <br /> <span className="i">{this.props.balance}</span>
               </div>

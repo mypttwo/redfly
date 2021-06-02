@@ -1,5 +1,6 @@
 DB_CONN_STR=dbconnstr
 PORT=8000
+PORTSSL=8001
 IPFS_KEY=key
 IPFS_SECRET_KEY=secretKey
 

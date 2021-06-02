@@ -2,8 +2,20 @@
 
 const express = require("express")();
 const http = require("http");
+const https = require("https");
 const cors = require("cors")();
 const proxySetup = require("./proxySetup");
+const fs = require("fs");
+const path = require("path");
+
+let certDir = path.join(__dirname, "../cert");
+
+let key = fs.readFileSync(certDir + "/selfsigned.key");
+let cert = fs.readFileSync(certDir + "/selfsigned.crt");
+let credentials = {
+  key: key,
+  cert: cert,
+};
 
 const tokenInfoController = require("./controllers/tokenInfo");
 
@@ -13,6 +25,11 @@ express.use("/tokenInfo", tokenInfoController);
 
 proxySetup(express);
 
-const server = http.createServer(express);
+express.get("/", (req, res) => {
+  res.send("Hello World.");
+});
 
-module.exports = server;
+const server = http.createServer(express);
+const serverSSL = https.createServer(credentials, express);
+
+module.exports = { server, serverSSL };
