@@ -8,10 +8,10 @@ const proxySetup = require("./proxySetup");
 const fs = require("fs");
 const path = require("path");
 
-let certDir = path.join(__dirname, "../cert");
+let certDir = path.join(__dirname, "../.cert");
 
-let key = fs.readFileSync(certDir + "/selfsigned.key");
-let cert = fs.readFileSync(certDir + "/selfsigned.crt");
+let key = fs.readFileSync(certDir + "/key.pem");
+let cert = fs.readFileSync(certDir + "/cert.pem");
 let credentials = {
   key: key,
   cert: cert,
