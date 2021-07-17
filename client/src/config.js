@@ -5,4 +5,9 @@ const nftContractAddress = process.env.REACT_APP_NFT_ADDRESS;
 const rftFactoryContractAddress = process.env.REACT_APP_RFT_FACTORY_ADDRESS;
 const network = process.env.REACT_APP_NETWORK;
 
-export { server, nftContractAddress, rftFactoryContractAddress, network };
+module.exports = {
+  server,
+  nftContractAddress,
+  rftFactoryContractAddress,
+  network,
+};

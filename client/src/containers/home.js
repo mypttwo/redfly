@@ -4,11 +4,13 @@ import logo from "../logo.svg";
 import "../App.css";
 import Marketplace from "./marketplace";
 import Manager from "./manager";
+import Classified from "./classified";
 
 import { getMaskedAddress } from "../utils/shorten";
 import connectToMetamask from "../utils/metamask";
 import Main from "./main";
 import CreateNFT from "./createNft";
+import ImportNFT from "./nftImport";
 import { getNetworkId } from "../utils/network";
 import MetamaskConnectWarning from "./metamaskConnectWarning";
 import withAppContext from "../hocs/withAppContext";
@@ -17,6 +19,8 @@ import light from "../svg/moon-stars.svg";
 import dark from "../svg/moon-stars-fill.svg";
 import GetStarted from "./howToGetStarted";
 import Withdraw from "./howToWithdraw";
+import classified from "./classified";
+import WallectConnect from "./walletConnect";
 
 export const MAIN = 0;
 export const MARKET_PLACE = 1;
@@ -24,6 +28,8 @@ export const MANAGER = 2;
 export const CREATENFT = 3;
 export const HOW_TO_GET_STARTED = 4;
 export const HOW_TO_WITHDRAW = 5;
+export const IMPORTNFT = 6;
+export const CLASSIFIED = 7;
 
 class Home extends React.Component {
   state = {
@@ -83,42 +89,63 @@ class Home extends React.Component {
     let marketPlaceActive = "text-decoration-underline";
     let managerActive = "";
     let createNFTActive = "";
+    let importNFTActive = "";
+    let classifiedActive = "";
+
+    let reset = () => {
+      marketPlaceActive = "";
+      managerActive = "";
+      createNFTActive = "";
+      importNFTActive = "";
+      classifiedActive = "";
+    };
 
     if (this.state.page == MANAGER) {
       page = <Manager></Manager>;
-      marketPlaceActive = "";
+      reset();
       managerActive = "text-decoration-underline";
-      createNFTActive = "";
     }
 
     if (this.state.page == MAIN) {
       page = <Main gotoPage={this.gotoPage}></Main>;
-      marketPlaceActive = "";
-      managerActive = "";
-      createNFTActive = "";
+      reset();
+    }
+
+    if (this.state.page == CLASSIFIED) {
+      page = <Classified gotoPage={this.gotoPage}></Classified>;
+      reset();
+      classifiedActive = "text-decoration-underline";
     }
 
     if (this.state.page == CREATENFT) {
       page = <CreateNFT></CreateNFT>;
-      marketPlaceActive = "";
-      managerActive = "";
+      reset();
       createNFTActive = "text-decoration-underline";
+    }
+
+    if (this.state.page == IMPORTNFT) {
+      page = <ImportNFT></ImportNFT>;
+      reset();
+      importNFTActive = "text-decoration-underline";
     }
 
     if (this.state.page == HOW_TO_GET_STARTED) {
       page = <GetStarted gotoPage={this.gotoPage} />;
-      marketPlaceActive = "";
-      managerActive = "";
-      createNFTActive = "";
+      reset();
     }
     if (this.state.page == HOW_TO_WITHDRAW) {
       page = <Withdraw gotoPage={this.gotoPage} />;
-      marketPlaceActive = "";
-      managerActive = "";
-      createNFTActive = "";
+      reset();
     }
 
-    return { page, marketPlaceActive, managerActive, createNFTActive };
+    return {
+      page,
+      marketPlaceActive,
+      managerActive,
+      createNFTActive,
+      importNFTActive,
+      classifiedActive,
+    };
   };
 
   toggleDark = () => {
@@ -136,8 +163,14 @@ class Home extends React.Component {
   };
 
   render() {
-    let { page, marketPlaceActive, managerActive, createNFTActive } =
-      this.getPage();
+    let {
+      page,
+      marketPlaceActive,
+      managerActive,
+      createNFTActive,
+      importNFTActive,
+      classifiedActive,
+    } = this.getPage();
 
     let darkModeJSX = (
       <div
@@ -176,13 +209,13 @@ class Home extends React.Component {
       </>
     );
 
-    if (this.state.accounts.length) {
-      accountsJSX = (
-        <p className="btn-link pt-3" onClick={this.setupMetamask}>
-          {getMaskedAddress(this.state.accounts[0])}
-        </p>
-      );
-    }
+    // if (this.state.accounts.length) {
+    //   accountsJSX = (
+    //     <p className="btn-link pt-3" onClick={this.setupMetamask}>
+    //       {getMaskedAddress(this.state.accounts[0])}
+    //     </p>
+    //   );
+    // }
 
     return (
       <div className="App">
@@ -229,14 +262,25 @@ class Home extends React.Component {
                     onClick={() => this.gotoPage(MARKET_PLACE)}
                     data-bs-toggle="tooltip"
                     data-bs-placement="bottom"
-                    title="Marketplace"
+                    title="ICO Marketplace"
                   >
-                    Marketplace
+                    ICO Marketplace
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className={`btn btn-link  border-0 ${classifiedActive}`}
+                    onClick={() => this.gotoPage(CLASSIFIED)}
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="bottom"
+                    title="Buy/Sell"
+                  >
+                    Buy/Sell
                   </button>
                 </li>
                 <li className="nav-item dropdown">
                   <a
-                    className="nav-link dropdown-toggle show"
+                    className="nav-link dropdown-toggle show opaque"
                     data-bs-toggle="dropdown"
                     href="#"
                     role="button"
@@ -246,15 +290,15 @@ class Home extends React.Component {
                     How to...
                   </a>
                   <div className="dropdown-menu" data-bs-popper="none">
-                    <a
-                      className="dropdown-item"
+                    <div
+                      className="dropdown-item opaque"
                       href="#"
                       onClick={() => this.gotoPage(HOW_TO_GET_STARTED)}
                     >
                       Create an NFT and mint your own Coin
-                    </a>
+                    </div>
                     <a
-                      className="dropdown-item"
+                      className="dropdown-item opaque"
                       href="#"
                       onClick={() => this.gotoPage(HOW_TO_WITHDRAW)}
                     >
@@ -264,13 +308,22 @@ class Home extends React.Component {
                 </li>
               </ul>
               <form className="d-flex">{darkModeJSX}</form>
-              <form className="d-flex  mr-3">
+              <form className="d-flex my-1 mr-3">
                 <button
                   type="button"
                   className={`btn btn-success  ${createNFTActive}`}
                   onClick={() => this.gotoPage(CREATENFT)}
                 >
                   Create NFT
+                </button>
+              </form>
+              <form className="d-flex my-1 mr-3">
+                <button
+                  type="button"
+                  className={`btn btn-success  ${importNFTActive}`}
+                  onClick={() => this.gotoPage(IMPORTNFT)}
+                >
+                  Import NFT
                 </button>
               </form>
               <form className="d-flex">
@@ -285,8 +338,9 @@ class Home extends React.Component {
                   ICO Dashboard
                 </button>
               </form>
-              <form className="mx-3">{this.state.network}</form>
-              <form className="d-flex">{accountsJSX}</form>
+              {/* <form className="mx-3">{this.state.network}</form>
+              <form className="d-flex">{accountsJSX}</form> */}
+              <WallectConnect></WallectConnect>
             </div>
           </div>
         </nav>

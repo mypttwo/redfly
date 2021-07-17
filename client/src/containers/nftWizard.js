@@ -1,7 +1,6 @@
 import React from "react";
 import connectToMetamask from "../utils/metamask";
 import { createNFT } from "../utils/nftContract";
-import { server } from "../config";
 import axios from "axios";
 import Loader from "react-loader-spinner";
 import Web3 from "web3";
@@ -40,8 +39,8 @@ class NFTWizard extends React.Component {
 
   async componentDidMount() {
     try {
-      let web3 = new Web3(window.web3.currentProvider);
-      let { accounts } = await connectToMetamask(null);
+      new Web3(window.web3.currentProvider);
+      await connectToMetamask(null);
     } catch (error) {
       this.setState({ disableActionButton: true });
     }
@@ -103,9 +102,9 @@ class NFTWizard extends React.Component {
 
   getTokenInfo = () => {
     let tokenInfo = {
-      url: this.state.url,
+      image: this.state.url,
       name: this.state.name,
-      desc: this.state.description,
+      description: this.state.description,
       links: [],
     };
     if (this.state.twitter) {
@@ -156,7 +155,7 @@ class NFTWizard extends React.Component {
     if (this.state.url && this.state.name && this.state.description) {
       if (accounts) {
         let tokenInfo = this.getTokenInfo();
-        let response = await axios.post(`${server}/tokenInfo`, tokenInfo);
+        let response = await axios.post(`/tokenInfo`, tokenInfo);
 
         if (response.status === 200) {
           let tokenUri = `https://gateway.pinata.cloud/ipfs/${response.data}`;
@@ -232,7 +231,7 @@ class NFTWizard extends React.Component {
               <Artifact nft={nft} />
               <div className="card-body">
                 <h5 className="card-title">{nft.name}</h5>
-                <p className="card-title">{nft.desc}</p>
+                <p className="card-title">{nft.description}</p>
                 <Links nft={nft} />
               </div>
 
@@ -288,20 +287,19 @@ class NFTWizard extends React.Component {
         <div className="h5">These fields are required.</div>
         <div className="mb-3">
           <label htmlFor="image-url" className="form-label">
-            URL of the art work
+            Image URL
           </label>
           <input
             type="text"
             className="form-control"
             id="image-url"
-            placeholder="Example : http://somewhere.com/photos/mymasterpiece.png"
+            placeholder="Example : http://somewhere.com/images/mymasterpiece.png"
             value={this.state.url}
             name="url"
             onChange={this.handleChange}
           />
           <div id="image-help" className="form-text">
-            Specify the link of the art work itself. Not the page where its
-            available.
+            Specify the link of the image that you wish to display.
           </div>
         </div>
         <div className="mb-3">
@@ -318,7 +316,7 @@ class NFTWizard extends React.Component {
             onChange={this.handleChange}
           />
           <div id="name-help" className="form-text">
-            Enter the title of the art work. This will be public.
+            Enter the title. This will be public.
           </div>
         </div>
         <div className="mb-3">

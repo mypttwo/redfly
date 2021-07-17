@@ -6,14 +6,14 @@ import Search from "../components/search";
 import IcoManager, { PAGETYPE } from "./icoManager";
 
 import Loader from "react-loader-spinner";
-import IcoDropdown from "./icoDropdown";
+// import IcoDropdown from "./icoDropdown";
 import nftFilter from "../utils/nftFilter";
 import { IcoFilter } from "../utils/nftFilter";
+import NFTFilterDropdown from "./nftFilterDropdown";
 
 class Marketplace extends React.Component {
   state = {
     nfts: [],
-    loading: true,
     search: "",
     icoFilter: IcoFilter.filters[IcoFilter.ALL],
   };
@@ -22,10 +22,12 @@ class Marketplace extends React.Component {
     // console.log(10 * (await getUSDEth()));
 
     this.props.appContext.registerForUpdates(this.updateNFTS);
-    this.setState({
-      nfts: this.props.appContext.nfts,
-      loading: false,
-    });
+    this.setState(
+      {
+        nfts: this.props.appContext.nfts,
+      },
+      console.log("loading completed")
+    );
   }
 
   updateIcoFilter = (icoFilter) => {
@@ -52,7 +54,7 @@ class Marketplace extends React.Component {
       if (nft.rft) {
         icoJSX = (
           <IcoManager
-            key={nft.rft.rftAddress}
+            key={nft.rft.rftContractAddress}
             nft={nft}
             index={index}
             pageType={PAGETYPE.MARKETPLACE}
@@ -68,10 +70,14 @@ class Marketplace extends React.Component {
       <form>
         <div className="row">
           <div className="col-4">
-            <IcoDropdown
+            {/* <IcoDropdown
               icoFilter={this.state.icoFilter}
               updateIcoFilter={this.updateIcoFilter}
-            ></IcoDropdown>
+            ></IcoDropdown> */}
+            <NFTFilterDropdown
+              icoFilter={this.state.icoFilter}
+              updateIcoFilter={this.updateIcoFilter}
+            ></NFTFilterDropdown>
           </div>
           <div className="col-8">
             <Search
@@ -84,12 +90,38 @@ class Marketplace extends React.Component {
     );
   };
 
+  filterNfts = () => {
+    let nfts = [];
+    if (this.state.icoFilter.name === IcoFilter.filters[IcoFilter.ALL].name) {
+      let nftsLive = nftFilter(
+        this.state.nfts,
+        this.state.search,
+        IcoFilter.filters[IcoFilter.LIVE]
+      );
+      let nftsUpcoming = nftFilter(
+        this.state.nfts,
+        this.state.search,
+        IcoFilter.filters[IcoFilter.UPCOMING]
+      );
+      nfts = nftsLive.concat(nftsUpcoming);
+    } else {
+      nfts = nftFilter(
+        this.state.nfts,
+        this.state.search,
+        this.state.icoFilter
+      );
+    }
+
+    return nfts;
+  };
+
   render() {
-    if (this.state.loading) {
+    if (this.props.appContext.loading) {
+      console.log("loading");
       return (
         <div className="container full-height d-flex align-items-center justify-content-center">
           <Loader
-            className="d-flex align-items-center justify-content-center"
+            // className="d-flex align-items-center justify-content-center"
             type="Grid"
             color="red"
             timeout={600000} //3 secs
@@ -98,11 +130,7 @@ class Marketplace extends React.Component {
       );
     }
 
-    let nfts = nftFilter(
-      this.state.nfts,
-      this.state.search,
-      this.state.icoFilter
-    );
+    let nfts = this.filterNfts();
 
     return (
       <div className="container">

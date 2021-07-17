@@ -16,11 +16,10 @@ class Main extends React.Component {
             <p className="lead mb-4 font-monospace text-success mt-3">
               <Banner
                 strings={[
-                  "Showcase your work on the blockchain. ",
-                  "Mint and distribute your own coins.",
-                  "Collect rare artifacts and trade coins.",
-                  "<span className=' text-warning'>Red Fly</span>",
-                  "The confluence of technology and the future.",
+                  "Showcase your work",
+                  "Mint your own coins",
+                  "<span class='text-warning'>Red Fly</span>",
+                  "The blockchain",
                   "And you.",
                 ]}
               />
@@ -66,16 +65,16 @@ class Main extends React.Component {
                 </svg>
               </div> */}
               <div>
-                <h2 className="text-warning">
-                  Showcase your content on the blockchain
-                </h2>
+                <h3 className="text-warning">
+                  Showcase your creation on the blockchain
+                </h3>
                 <p>
-                  Red Fly helps you create art work on the blockchain as Non
-                  Fungible Tokens (NFT).
+                  Red Fly helps you showcase your creations on the blockchain as
+                  Non Fungible Tokens (NFT).
                 </p>
                 <p>
-                  With one click you can easily mint new NFTs and your content
-                  will become sellable globally on decentralized marketplaces.
+                  With one click you can easily mint new NFTs and your work will
+                  become sellable globally on decentralized marketplaces.
                 </p>
 
                 <a
@@ -94,10 +93,10 @@ class Main extends React.Component {
                 </svg>
               </div> */}
               <div>
-                <h2 className="text-warning">Sell shares of your content</h2>
+                <h3 className="text-warning">Sell shares of your creation</h3>
                 <p>
-                  Red Fly offers a unique way of further monetizing your content
-                  by helping you sell shares (or coins) of your NFT.
+                  Red Fly offers a unique way of further monetizing your work by
+                  helping you sell shares (or coins) of your NFT.
                 </p>
                 <p>
                   With one click you can create your own unique coin on the
@@ -124,7 +123,7 @@ class Main extends React.Component {
                 </svg>
               </div> */}
               <div>
-                <h2 className="text-warning">Buy and Trade shares</h2>
+                <h3 className="text-warning">Buy and Trade shares</h3>
                 <p>
                   If you are a buyer Red Fly offers a simple and unique way to
                   build a valuable portfolio of NFT related coins.
@@ -134,8 +133,8 @@ class Main extends React.Component {
                   decentralized exchanges.
                 </p>
                 <p>
-                  You can also follow your favorite content creators via social
-                  media and interact with them.
+                  You can also follow your favorite creators via social media
+                  and interact with them.
                 </p>
                 <a
                   href="#"

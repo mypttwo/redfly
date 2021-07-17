@@ -63,7 +63,7 @@ contract RFT is ERC20, Ownable{
         uint daiBalance = dai.balanceOf(address(this));
         require(amount <= daiBalance, "Withdrawal should be less than current balance");
         if(daiBalance > 0){
-            dai.transfer(owner(), daiBalance);
+            dai.transfer(owner(), amount);
         }
     }
 

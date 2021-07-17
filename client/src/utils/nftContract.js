@@ -1,8 +1,14 @@
 import Web3 from "web3";
 import { abi, address } from "./nftContractDef";
 import connectToMetamask from "../utils/metamask";
-import axios from "axios";
-import { server } from "../config";
+// import {
+//   getUrlExtension,
+//   getDescription,
+//   getImage,
+//   getName,
+// } from "../utils/tokenURIReader";
+// import { createNFTObj, createNFTTokenObj } from "./createObj";
+// import axios from "axios";
 
 const setupNFTContract = (eventHandler) => {
   let web3 = new Web3(window.web3.currentProvider);
@@ -10,11 +16,7 @@ const setupNFTContract = (eventHandler) => {
 
   nftc.events.Minted(async (error, event) => {
     if (eventHandler && eventHandler.handleMinted) {
-      if (error) {
-        eventHandler.handleMinted(error);
-      } else {
-        eventHandler.handleMinted(error, event);
-      }
+      eventHandler.handleMinted(error, event);
     }
   });
 
@@ -109,17 +111,15 @@ const withdraw = async (nftc) => {
   }
 };
 
-const approveTransferOfTokenFromNFTToRFT = async (
-  rftAddress,
-  tokenId,
-  recieptHandler
-) => {
+const approveTransferOfTokenFromNFTToRFT = async (rft, recieptHandler) => {
   let { accounts } = await connectToMetamask(null);
 
   if (accounts.length) {
     try {
+      let rftAddress = rft.rftContractAddress;
+      let tokenId = rft.nftTokenId;
       let web3 = new Web3(window.web3.currentProvider);
-      let nftc = new web3.eth.Contract(abi, address);
+      let nftc = new web3.eth.Contract(abi, rft.nftContractAddress);
 
       await nftc.methods
         .approve(rftAddress, tokenId)
@@ -146,33 +146,66 @@ const approveTransferOfTokenFromNFTToRFT = async (
     }
   }
 };
+// const getNFT = async (nftc) => {
+//   try {
+//     let name = await nftc.methods.name().call();
+//     let symbol = await nftc.methods.name().call();
+//     let nft = createNFTObj(nftc.options.address, name, symbol);
 
-const getAllNFTS = async (nftc) => {
-  try {
-    let tokenData = await nftc.methods.allTokens().call();
-    console.log(JSON.stringify(tokenData[1]));
-    let tokenUriPromises = tokenData[1].map((tokenURI) => {
-      return axios.get(`${server}/ipfs/?${tokenURI}`);
-    });
-    return Promise.all(tokenUriPromises).then((values) => {
-      let nfts = values.map((value, index) => {
-        let nft = value.data;
-        nft.tokenId = tokenData[0][index];
-        nft.owner = tokenData[2][index];
-        return nft;
-      });
-      console.log(nfts);
-      return nfts;
-    });
-  } catch (error) {
-    console.error(error);
-  }
-};
+//     console.log("NFT", nft);
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
+
+// const getAllNFTTokensInternal = async (nftc) => {
+//   try {
+//     let start = Date.now();
+
+//     let tokenData = await nftc.methods.allTokens().call();
+
+//     let end = Date.now();
+//     console.log(`all tokens Execution time: ${end - start} ms`);
+
+//     // console.log(JSON.stringify(tokenData[1]));
+//     let tokenUriPromises = tokenData[1].map((tokenURI) => {
+//       return axios.get(`/ipfs?iurl=${tokenURI}`);
+//     });
+//     return Promise.all(tokenUriPromises).then((values) => {
+//       let nfts = values.map((value, index) => {
+//         try {
+//           let nft = createNFTTokenObj(
+//             nftc.options.address,
+//             null,
+//             null,
+//             tokenData[2][index],
+//             tokenData[0][index],
+//             tokenData[1][index],
+//             getName(value.data),
+//             getImage(value.data),
+//             getDescription(value.data)
+//           );
+//           if (value.data.links) {
+//             nft.links = value.data.links;
+//           }
+//           return nft;
+//         } catch (error) {
+//           console.error("reading nft from token Data err", error);
+//         }
+//       });
+//       console.log(nfts);
+//       return nfts.filter((nft) => nft);
+//     });
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
 
 export {
   setupNFTContract,
   createNFT,
-  getAllNFTS,
+  // getNFT,
+  // getAllNFTTokensInternal,
   withdraw,
   approveTransferOfTokenFromNFTToRFT,
   getApproved,

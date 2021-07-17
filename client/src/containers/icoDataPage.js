@@ -1,10 +1,15 @@
 import React from "react";
 
-import { ICOStatus, getICOStatus } from "../utils/contractDataReader";
+import {
+  ICOStatus,
+  getICOStatus,
+  getICOStatusByIcoEndDate,
+} from "../utils/contractDataReader";
 
 class IcoDataPage extends React.Component {
-  getICOStatusJSX = (nft) => {
-    let icoStatus = getICOStatus(nft);
+  getICOStatusJSX = () => {
+    // let icoStatus = getICOStatus(this.props.nft);
+    let icoStatus = getICOStatusByIcoEndDate(this.props.icoEndDate);
     let icoStatusJSX = "";
     switch (icoStatus) {
       case ICOStatus.NOT_INIT:
@@ -19,7 +24,7 @@ class IcoDataPage extends React.Component {
         icoStatusJSX = (
           <div className="d-flex justify-content-between align-items-center p-3">
             <span>ICO End Date</span>
-            <span className="">{nft.rft.icoEndDate.toDateString()}</span>
+            <span className="">{this.props.icoEndDate.toDateString()}</span>
           </div>
         );
 
@@ -122,7 +127,7 @@ class IcoDataPage extends React.Component {
                 <span className=" text-info">{this.props.balance}</span>
               </li> */}
 
-            {this.getICOStatusJSX(this.props.nft)}
+            {this.getICOStatusJSX()}
           </ul>
           {this.props.children}
           {/* </div> */}

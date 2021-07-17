@@ -38,9 +38,6 @@ const createRFT = async (
         nftAddress,
         nftTokenId,
         icoTokenPrice,
-        //web3.utils.toWei(`${icoTokenPrice}`),
-        // icoTokenSupply,
-        // icoTokenReserve,
         web3.utils.toWei(`${icoTokenSupply}`),
         web3.utils.toWei(`${icoTokenReserve}`)
       )
@@ -62,14 +59,14 @@ const createRFT = async (
   }
 };
 
-const getRFTs = async () => {
-  try {
-    let rftfc = setupRFTFactoryContract(null);
-    let rftAddressList = await rftfc.methods.getRFTs().call();
-    return rftAddressList;
-  } catch (error) {
-    console.error(error);
-  }
-};
+// const getRFTAddressList = async () => {
+//   try {
+//     let rftfc = setupRFTFactoryContract(null);
+//     let rftAddressList = await rftfc.methods.getRFTs().call();
+//     return rftAddressList;
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
 
-export { setupRFTFactoryContract, createRFT, getRFTs };
+export { setupRFTFactoryContract, createRFT /*, getRFTAddressList*/ };

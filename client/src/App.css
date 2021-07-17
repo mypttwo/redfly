@@ -58,24 +58,13 @@ body {
     height: 70vh;
 }
 
-.downshift-dropdown {
-  
-  width: 22rem;
-  /* background-color: var(--primary); */
-  position: absolute;
-  z-index: 1;
-  opacity: 90%;
-  border: 1px solid black;
-  /* border-bottom: 1px solid whitesmoke; */
+.opaque {
+  opacity : 1
 }
 
-.dropdown-item {
-  padding: 0.5rem;
-  cursor: pointer;
-  /* border-bottom: 5px solid black; */
-  font-size: 1rem;
-  text-align: left;
-  opacity: 100%;
+.width-inherit {
+  position:relative;
+width: calc(100% - 30px);
 }
 
 .has-search .form-control {
@@ -94,23 +83,11 @@ body {
   color: #aaa;
 }
 
-
-/* .dropdown-button {
-  padding: 0.6rem;
-  border-radius: 3px;
-  background: white;
-  cursor: pointer;
-} */
-
-/* .popper-div {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 5rem;
+.wallet-address{
+  font-size: .8rem;
+}
+.chainId{
+  font-size: .6rem;
 }
 
-.popper-item {
-  padding: 0.5rem;
-  border-bottom: 1px solid whitesmoke;
-} */
+

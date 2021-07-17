@@ -2,6 +2,9 @@ import React from "react";
 import { getBalance } from "../utils/daiContract";
 import { withdrawDai } from "../utils/rftContract";
 import Loader from "react-loader-spinner";
+import rftABI from "../utils/rftContractDef";
+import connectToMetamask from "../utils/metamask";
+import Web3 from "web3";
 
 class IcoWithdrawForm extends React.Component {
   state = {
@@ -12,12 +15,33 @@ class IcoWithdrawForm extends React.Component {
   };
 
   async componentDidMount() {
-    let balance = await getBalance(this.props.nft.rft.rftAddress);
+    let balance = await getBalance(this.props.nft.rft.rftContractAddress);
+    this.setupWithdrawListener();
     this.setState({
       balance,
       amount: balance,
     });
   }
+  setupWithdrawListener = async () => {
+    try {
+      let web3 = new Web3(window.web3.currentProvider);
+      let rftc = new web3.eth.Contract(
+        rftABI,
+        this.props.nft.rft.rftContractAddress
+      );
+
+      rftc.events.Bought(async (error, event) => {
+        console.log("Bought!");
+        let balance = await getBalance(this.props.nft.rft.rftContractAddress);
+        this.setState({
+          balance,
+          amount: balance,
+        });
+      });
+    } catch (error) {
+      console.error("setupWithdrawListener", error);
+    }
+  };
 
   handleChange = (event) => {
     const { name, value } = event.target;
@@ -48,7 +72,7 @@ class IcoWithdrawForm extends React.Component {
       });
     } else {
       console.log(reciept);
-      let balance = await getBalance(this.props.nft.rft.rftAddress);
+      let balance = await getBalance(this.props.nft.rft.rftContractAddress);
       this.setState({
         statusMessage: "",
         enableActionButton: true,
@@ -59,15 +83,16 @@ class IcoWithdrawForm extends React.Component {
   };
 
   withdraw = async () => {
-    withdrawDai(
-      this.state.amount,
-      this.props.nft.rft.rftAddress,
-      this.withdrawDaiRecieptHandler
-    );
-    this.setState({
-      statusMessage: "Withdrawing DAI",
-      enableActionButton: false,
-    });
+    console.log(this.state.amount);
+    // withdrawDai(
+    //   this.state.amount,
+    //   this.props.nft.rft.rftContractAddress,
+    //   this.withdrawDaiRecieptHandler
+    // );
+    // this.setState({
+    //   statusMessage: "Withdrawing DAI",
+    //   enableActionButton: false,
+    // });
   };
   render() {
     return (

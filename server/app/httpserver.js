@@ -1,6 +1,6 @@
 "use strict";
 
-const express = require("express")();
+const express = require("express");
 const http = require("http");
 const https = require("https");
 const cors = require("cors")();
@@ -8,7 +8,7 @@ const proxySetup = require("./proxySetup");
 const fs = require("fs");
 const path = require("path");
 
-let certDir = path.join(__dirname, "../.cert");
+let certDir = path.join(__dirname, "../cert");
 
 let key = fs.readFileSync(certDir + "/key.pem");
 let cert = fs.readFileSync(certDir + "/cert.pem");
@@ -18,18 +18,25 @@ let credentials = {
 };
 
 const tokenInfoController = require("./controllers/tokenInfo");
+const blockchainDataController = require("./controllers/blockchain");
 
-express.use(cors);
+let app = express();
 
-express.use("/tokenInfo", tokenInfoController);
+app.use(cors);
 
-proxySetup(express);
+app.use("/tokenInfo", tokenInfoController);
+app.use("/blockchainData", blockchainDataController);
 
-express.get("/", (req, res) => {
-  res.send("Hello World.");
+proxySetup(app);
+
+app.use(express.static(path.join(__dirname, "../build")));
+app.get("/", (req, res) => {
+  let indexFile = path.join(__dirname, "../build", "index.html");
+  console.log(indexFile);
+  res.sendFile(indexFile);
 });
 
-const server = http.createServer(express);
-const serverSSL = https.createServer(credentials, express);
+const server = http.createServer(app);
+const serverSSL = https.createServer(credentials, app);
 
 module.exports = { server, serverSSL };

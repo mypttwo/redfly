@@ -1,8 +1,13 @@
 import React from "react";
 import IcoDataPage from "./icoDataPage";
-import { ICOStatus, getICOStatus } from "../utils/contractDataReader";
+import {
+  ICOStatus,
+  getICOStatus,
+  getICOStatusByIcoEndDate,
+} from "../utils/contractDataReader";
 import IcoStartForm from "./icoStartForm";
 import IcoWithdrawForm from "./icoWithdrawForm";
+import ICOClassifiedMain from "./icoClassifiedMain";
 import BuyCoinForm from "./buyCoinForm";
 import rftABI from "../utils/rftContractDef";
 import connectToMetamask from "../utils/metamask";
@@ -17,6 +22,7 @@ class IcoManager extends React.Component {
   state = {
     balance: "",
     totalSupply: "",
+    icoEndDate: "",
     rftc: null,
   };
 
@@ -26,45 +32,79 @@ class IcoManager extends React.Component {
         balance: "",
         totalSupply: "",
       },
-      async () => await this.updateBalance()
+      async () => await this.updateIcoData()
     );
   }
 
-  updateBalance = async () => {
+  updateIcoData = async () => {
     try {
       let { accounts } = await connectToMetamask(null);
       let web3 = new Web3(window.web3.currentProvider);
-      let rftc = new web3.eth.Contract(rftABI, this.props.nft.rft.rftAddress);
+      let rftc = new web3.eth.Contract(
+        rftABI,
+        this.props.nft.rft.rftContractAddress
+      );
+
+      rftc.events.ICOStarted(async (error, event) => {
+        if (error) {
+          console.error("ICOStarted", error);
+          return;
+        }
+        console.log("ICOStarted!");
+        if (event.returnValues && event.returnValues.icoEnd) {
+          //set end date
+          let icoEndDate = 0;
+          if (event.returnValues.icoEnd != 0) {
+            icoEndDate = new Date(event.returnValues.icoEnd * 1000);
+            this.setState({
+              icoEndDate: icoEndDate,
+            });
+          }
+        }
+      });
 
       rftc.events.Bought(async (error, event) => {
         console.log("Bought!");
         let balance = await rftc.methods.balanceOf(accounts[0]).call();
         let totalSupply = await rftc.methods.totalSupply().call();
-        console.log(this.props.nft.rft.rftAddress, balance);
-        console.log(this.props.nft.rft.rftAddress, totalSupply);
+
         this.setState({
           balance: web3.utils.fromWei(balance),
           totalSupply: web3.utils.fromWei(totalSupply),
         });
       });
-
+      // if (this.props.nft.rft && this.props.nft.rft.symbol === "CCC") {
+      //   debugger;
+      // }
       let balance = await rftc.methods.balanceOf(accounts[0]).call();
       let totalSupply = await rftc.methods.totalSupply().call();
+      let icoEnd = await rftc.methods.icoEnd().call();
+      let icoEndDate = 0;
+      if (icoEnd != 0) {
+        icoEndDate = new Date(icoEnd * 1000);
+        this.setState({
+          icoEndDate: icoEndDate,
+        });
+      }
 
       this.setState({
         rftc: rftc,
         balance: web3.utils.fromWei(balance),
         totalSupply: web3.utils.fromWei(totalSupply),
+        icoEndDate: icoEndDate,
       });
     } catch (error) {
-      console.error("updateBalance", error);
+      console.error("updateIcoData", error);
     }
   };
 
   render() {
     let icoJSX = "";
-
-    let icoStatus = getICOStatus(this.props.nft);
+    // if (this.props.nft.rft && this.props.nft.rft.symbol === "CCC") {
+    //   debugger;
+    // }
+    // let icoStatus = getICOStatus(this.props.nft);
+    let icoStatus = getICOStatusByIcoEndDate(this.state.icoEndDate);
 
     switch (icoStatus) {
       case ICOStatus.PENDING:
@@ -86,7 +126,7 @@ class IcoManager extends React.Component {
         if (this.props.pageType == PAGETYPE.MANAGER) {
           icoJSX = <IcoWithdrawForm nft={this.props.nft}></IcoWithdrawForm>;
         } else {
-          //icoJSX = <>Waiting...</>;
+          icoJSX = <ICOClassifiedMain nft={this.props.nft}></ICOClassifiedMain>;
         }
         break;
       case ICOStatus.NOT_INIT:
@@ -106,6 +146,7 @@ class IcoManager extends React.Component {
           index={this.props.index}
           balance={this.state.balance}
           totalSupply={this.state.totalSupply}
+          icoEndDate={this.state.icoEndDate}
         >
           {icoJSX}
         </IcoDataPage>

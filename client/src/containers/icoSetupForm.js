@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  setupRFTFactoryContract,
-  createRFT,
-} from "../utils/rftFactoryContract";
-import { address as nftAddress } from "../utils/nftContractDef";
-import { getApproved } from "../utils/nftContract";
+import { createRFT } from "../utils/rftFactoryContract";
 import Loader from "react-loader-spinner";
 import withAppContext from "../hocs/withAppContext";
 
@@ -46,14 +41,18 @@ class IcoSetupForm extends React.Component {
       console.error(error);
       console.error(reciept);
       this.setState({
-        statusMessage: "",
+        statusMessage: "ICO could not be setup...",
         enableActionButton: true,
       });
     } else {
       console.log(reciept);
-      this.setState({
-        statusMessage: "",
-      });
+      if (this.props.handleCompletion) {
+        this.props.handleCompletion(this.props.nft, reciept);
+      } else {
+        this.setState({
+          statusMessage: "",
+        });
+      }
     }
   };
 
@@ -62,7 +61,7 @@ class IcoSetupForm extends React.Component {
       this.props.appContext.rftfc,
       this.state.name,
       this.state.tokenSymbol,
-      nftAddress,
+      this.props.nft.nftContractAddress,
       this.props.nft.tokenId,
       this.state.tokenPrice,
       this.state.tokenSupply,
@@ -70,7 +69,7 @@ class IcoSetupForm extends React.Component {
       this.createRFTRecieptHandler
     );
 
-    getApproved(this.props.appContext.nftc, this.props.nft.tokenId);
+    // getApproved(this.props.appContext.nftc, this.props.nft.tokenId);
     this.setState({
       statusMessage: "Setting up the ICO. This may take a couple of minutes...",
       enableActionButton: false,

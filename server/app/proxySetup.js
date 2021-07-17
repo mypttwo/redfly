@@ -4,11 +4,12 @@ const proxy = require("express-http-proxy");
 
 const proxySetup = (express) => {
   express.use(
-    "/ipfs/",
+    "/ipfs",
     proxy("https://gateway.pinata.cloud/ipfs/", {
       proxyReqPathResolver: (req) => {
-        let parts = req.url.split("?");
-        let queryString = parts[1];
+        // let parts = req.url.split("?");
+        // let queryString = parts[1];
+        let queryString = req.query.iurl;
         console.log(queryString);
         return queryString;
       },

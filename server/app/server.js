@@ -3,11 +3,14 @@
 const { dbConnStr, port, portSSL } = require("./config");
 const mongoose = require("mongoose");
 const { server, serverSSL } = require("./httpserver");
+const { getData } = require("./blockchain/blockchain");
 
 mongoose
   .connect(dbConnStr)
-  .then(() => {
+  .then(async () => {
     console.log(`Connected to db`);
+    await getData();
+
     server.listen(port, (err) => {
       if (err) {
         console.error(err, `Shutting down server at ${port}`);

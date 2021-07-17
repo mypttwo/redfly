@@ -7,11 +7,8 @@ import IcoManager, { PAGETYPE } from "./icoManager";
 import nftFilter from "../utils/nftFilter";
 import { IcoFilter } from "../utils/nftFilter";
 import { filterMergedDataForAddress } from "../utils/contractData";
-import IcoSetupForm from "./icoSetupForm";
 
-import NFTWizard from "./nftWizard";
-
-class Manager extends React.Component {
+class Classified extends React.Component {
   state = {
     nfts: [],
     collapse: "collapse",
@@ -43,49 +40,9 @@ class Manager extends React.Component {
     });
   };
 
-  getCreateNFTJSX = () => {
-    return (
-      <React.Fragment>
-        <div className="row">
-          <div className="col-4">
-            <button
-              className="btn btn-secondary dropdown-toggle btn-block"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseCreate"
-            >
-              New NFT
-            </button>
-          </div>
-          <div className="col-8">{this.getSearch()}</div>
-        </div>
-        <div className="row">
-          <div className="col">
-            <div className={this.state.collapse} id="collapseCreate">
-              <NFTWizard></NFTWizard>
-            </div>
-          </div>
-        </div>
-      </React.Fragment>
-    );
-  };
-
-  handleIcoSetupCompletion = (nft, receipt) => {
-    console.log(
-      `${nft.nftContractAddress} ${nft.tokenId} IcoSetup receipt`,
-      receipt
-    );
-  };
-
   getChildrenJSX = (nfts) => {
     return nfts.map((nft, index) => {
-      let childJSX = (
-        <IcoSetupForm
-          nft={nft}
-          index={index}
-          handleCompletion={this.handleIcoSetupCompletion}
-        />
-      );
+      let childJSX = <></>;
       if (nft.rft) {
         childJSX = (
           <IcoManager
@@ -119,13 +76,12 @@ class Manager extends React.Component {
     let nfts = nftFilter(
       this.state.nfts,
       this.state.search,
-      IcoFilter.filters[IcoFilter.ALL]
+      IcoFilter.filters[IcoFilter.COMPLETED]
     );
 
     return (
       <div>
         <div className="container">
-          {this.getCreateNFTJSX()}
           <ArtworkCollectionMasonry nfts={nfts}>
             {this.getChildrenJSX(nfts)}
           </ArtworkCollectionMasonry>
@@ -135,4 +91,4 @@ class Manager extends React.Component {
   }
 }
 
-export default withAppContext(Manager);
+export default withAppContext(Classified);

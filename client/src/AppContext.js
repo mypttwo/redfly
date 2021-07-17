@@ -2,7 +2,11 @@ import React from "react";
 import { setupNFTContract } from "./utils/nftContract";
 import { setupRFTFactoryContract } from "./utils/rftFactoryContract";
 
-import { getMergedData } from "./utils/contractData";
+import {
+  getBlockchainData,
+  getBlockchainDataFromServerMintUpdate,
+  getBlockchainDataFromServerNewIcoUpdate,
+} from "./utils/serverBlockchainData";
 import EventEmitter, { DATA_LOADED_EVENT } from "./eventEmitter";
 import connectToMetamask from "./utils/metamask";
 
@@ -10,11 +14,13 @@ export const AppContext = React.createContext({});
 
 class AppContextProvider extends React.Component {
   state = {
-    nfts: [],
     nftc: null,
     rftfc: null,
     accounts: [],
     stylePath: "",
+    nftMap: new Map(),
+    nftTokenDataMap: new Map(),
+    loading: true,
   };
 
   refreshSet = new Set();
@@ -52,10 +58,15 @@ class AppContextProvider extends React.Component {
       this.refreshSet.add(transaction);
       console.log("CALLING REFRESH");
       try {
-        let nfts = await getMergedData(this.getRFTEventHandlers());
-        EventEmitter.publish(DATA_LOADED_EVENT, nfts);
+        let { nftMap, nftTokenDataMap } = await getBlockchainData(
+          this.state.nftMap,
+          this.state.nftTokenDataMap
+        );
+        EventEmitter.publish(DATA_LOADED_EVENT, [...nftTokenDataMap.values()]);
         this.setState({
-          nfts: nfts,
+          nftMap: nftMap,
+          nftTokenDataMap: nftTokenDataMap,
+          loading: false,
         });
       } catch (error) {
         console.error("refresh", error);
@@ -77,13 +88,16 @@ class AppContextProvider extends React.Component {
     return (
       <AppContext.Provider
         value={{
-          nfts: this.state.nfts,
+          nfts: [...this.state.nftTokenDataMap.values()],
+          nftTokenDataMap: this.state.nftTokenDataMap,
+          nftMap: this.state.nftMap,
           registerForUpdates: this.registerForUpdates,
           nftc: this.state.nftc,
           rftfc: this.state.rftfc,
           accounts: this.state.accounts,
           stylePath: this.state.stylePath,
           setStylePath: this.setStylePath,
+          loading: this.state.loading,
         }}
       >
         {this.props.children}
@@ -91,77 +105,38 @@ class AppContextProvider extends React.Component {
     );
   }
 
-  handleICOStarted = async (
-    error,
-    nftAddress,
-    tokenId,
-    rftAddress,
-    name,
-    symbol,
-    icoSharePrice,
-    icoShareSupply,
-    icoShareReserve,
-    icoEnd,
-    owner
-  ) => {
-    if (error) {
-      console.error("ICOStarted event", error);
-    } else {
-      console.log("ICOStarted event");
-      console.log("tokenId", tokenId);
-      console.log("rftAddress", rftAddress);
-      console.log("name", name);
-      console.log("symbol", symbol);
-      console.log("icoSharePrice", icoSharePrice);
-      console.log("icoShareSupply", icoShareSupply);
-      console.log("icoShareReserve", icoShareReserve);
-      console.log("icoEnd", icoEnd);
-      console.log("owner", owner);
-      // await this.refresh();
-    }
-  };
-
-  handleBought = async (
-    error,
-    nftAddress,
-    tokenId,
-    rftAddress,
-    name,
-    symbol,
-    buyerAddress,
-    shareAmount
-  ) => {
-    if (error) {
-      console.error("Bought event", error);
-    } else {
-      console.log("Bought event");
-      console.log("tokenId", tokenId);
-      console.log("rftAddress", rftAddress);
-      console.log("name", name);
-      console.log("symbol", symbol);
-      console.log("buyerAddress", buyerAddress);
-      console.log("shareAmount", shareAmount);
-      // await this.refresh();
-    }
-  };
-
-  getRFTEventHandlers = () => {
-    return {
-      handleICOStarted: this.handleICOStarted,
-      handleBought: this.handleBought,
-    };
-  };
-
   handleNewRFT = async (error, event) => {
     if (error) {
       console.error("New RFT event", error);
     } else {
-      console.log("handleNewRFT rft", event.returnValues.rft);
-      console.log("handleNewRFT creator", event.returnValues.creator);
-      console.log("handleNewRFT nft", event.returnValues.nft);
-      console.log("handleNewRFT tokenId", event.returnValues.tokenId);
-
-      await this.refresh(event.transactionHash);
+      console.log(JSON.stringify(event));
+      if (event.returnValues && event.returnValues.rft) {
+        console.log("handleNewRFT rft", event.returnValues.rft);
+        if (this.refreshSet.has(event.transactionHash)) {
+          return;
+        } else {
+          this.refreshSet.add(event.transactionHash);
+          console.log("CALLING REFRESH");
+          try {
+            let { nftMap, nftTokenDataMap } =
+              await getBlockchainDataFromServerNewIcoUpdate(
+                event.returnValues.rft,
+                this.state.nftMap,
+                this.state.nftTokenDataMap
+              );
+            EventEmitter.publish(DATA_LOADED_EVENT, [
+              ...nftTokenDataMap.values(),
+            ]);
+            this.setState({
+              nftMap: nftMap,
+              nftTokenDataMap: nftTokenDataMap,
+              loading: false,
+            });
+          } catch (error) {
+            console.error("refresh", error);
+          }
+        }
+      }
     }
   };
 
@@ -171,51 +146,44 @@ class AppContextProvider extends React.Component {
     };
   };
 
-  handleFeesUpdated = (error, event) => {
-    if (error) {
-      console.error("FeesUpdated event", error);
-    } else {
-      console.log("fees", event.returnValues.fees);
-    }
-  };
-
   handleMinted = async (error, event) => {
     if (error) {
       console.error("Minted event", error);
     } else {
       console.log(JSON.stringify(event));
-      console.log("handleMinted tokenId", event.returnValues.tokenId);
-      console.log("handleMinted minter", event.returnValues.minter);
-      await this.refresh(event.transactionHash);
-    }
-  };
-
-  handleBurnt = async (error, event) => {
-    if (error) {
-      console.error("Burnt event", error);
-    } else {
-      console.log("handleBurnt tokenId", event.returnValues.tokenId);
-      console.log("handleBurnt minter", event.returnValues.minter);
-      await this.refresh(event.transactionHash);
-    }
-  };
-
-  handleTokenURIUpdated = async (error, event) => {
-    if (error) {
-      console.error("TokenURIUpdated event", error);
-    } else {
-      console.log("handleTokenURIUpdated tokenId", event.returnValues.tokenId);
-      console.log("handleTokenURIUpdated minter", event.returnValues.minter);
-      await this.refresh(event.transactionHash);
+      if (event.returnValues && event.returnValues.tokenId) {
+        console.log("handleMinted tokenId", event.returnValues.tokenId);
+        if (this.refreshSet.has(event.transactionHash)) {
+          return;
+        } else {
+          this.refreshSet.add(event.transactionHash);
+          console.log("CALLING REFRESH");
+          try {
+            let { nftMap, nftTokenDataMap } =
+              await getBlockchainDataFromServerMintUpdate(
+                event.returnValues.tokenId,
+                this.state.nftMap,
+                this.state.nftTokenDataMap
+              );
+            EventEmitter.publish(DATA_LOADED_EVENT, [
+              ...nftTokenDataMap.values(),
+            ]);
+            this.setState({
+              nftMap: nftMap,
+              nftTokenDataMap: nftTokenDataMap,
+              loading: false,
+            });
+          } catch (error) {
+            console.error("refresh", error);
+          }
+        }
+      }
     }
   };
 
   getNFTEventHandlers = () => {
     return {
-      handleFeesUpdated: this.handleFeesUpdated,
       handleMinted: this.handleMinted,
-      handleBurnt: this.handleBurnt,
-      handleTokenURIUpdated: this.handleTokenURIUpdated,
     };
   };
 }

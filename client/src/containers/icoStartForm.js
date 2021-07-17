@@ -1,8 +1,6 @@
 import React from "react";
-import IcoDataPage from "./icoDataPage";
 import { approveTransferOfTokenFromNFTToRFT } from "../utils/nftContract";
 import { startIco } from "../utils/rftContract";
-import { ICOStatus, getICOStatus } from "../utils/contractDataReader";
 
 class IcoStartForm extends React.Component {
   state = {
@@ -40,7 +38,7 @@ class IcoStartForm extends React.Component {
     } else {
       startIco(
         this.state.days,
-        this.props.nft.rft.rftAddress,
+        this.props.nft.rft.rftContractAddress,
         this.startIcoRecieptHandler
       );
       this.setState({
@@ -64,13 +62,12 @@ class IcoStartForm extends React.Component {
 
   launchICO = async () => {
     approveTransferOfTokenFromNFTToRFT(
-      this.props.nft.rft.rftAddress,
-      this.props.nft.rft.tokenId,
+      this.props.nft.rft,
       this.nftTransferApprovalHandler
     );
     // startIco(
     //   this.state.days,
-    //   this.props.nft.rft.rftAddress,
+    //   this.props.nft.rft.rftContractAddress,
     //   this.startIcoRecieptHandler
     // );
     this.setState({

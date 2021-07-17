@@ -5,6 +5,12 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import AppContextProvider from "./AppContext";
 
+// import "bootstrap";
+// import "bootstrap/dist/css/bootstrap.css";
+// import "bootstrap/dist/js/bootstrap.js";
+// import $ from "jquery";
+// import Popper from "react-popper";
+
 ReactDOM.render(
   <React.StrictMode>
     <AppContextProvider>

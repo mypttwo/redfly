@@ -54,7 +54,7 @@ class BuyCoinForm extends React.Component {
       });
     } else {
       buyIco(
-        this.props.nft.rft.rftAddress,
+        this.props.nft.rft.rftContractAddress,
         web3.utils.toWei(`${this.state.numberOfCoins}`),
         this.buyIcoHandler
       );
@@ -73,7 +73,7 @@ class BuyCoinForm extends React.Component {
     if (isValid) {
       let web3 = new Web3(window.web3.currentProvider);
       approveTransfer(
-        this.props.nft.rft.rftAddress,
+        this.props.nft.rft.rftContractAddress,
         web3.utils.toWei(`${this.state.numberOfCoins}`) *
           this.props.nft.rft.tokenPrice,
         this.daiTransferHandler

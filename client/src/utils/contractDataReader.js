@@ -22,4 +22,19 @@ const getICOStatus = (nft) => {
   return null;
 };
 
-export { ICOStatus, getICOStatus };
+const getICOStatusByIcoEndDate = (icoEndDate) => {
+  if (!icoEndDate) {
+    return ICOStatus.PENDING;
+  }
+
+  let today = new Date();
+  if (icoEndDate && today <= icoEndDate) {
+    return ICOStatus.IN_PROGRESS;
+  }
+  if (icoEndDate && today > icoEndDate) {
+    return ICOStatus.COMPLETED;
+  }
+  return null;
+};
+
+export { ICOStatus, getICOStatus, getICOStatusByIcoEndDate };

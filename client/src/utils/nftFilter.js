@@ -3,12 +3,12 @@ export const IcoFilter = {
   ALL: 0,
   LIVE: 1,
   UPCOMING: 2,
-  // COMPLETED: 3,
+  COMPLETED: 3,
   filters: [
     { name: "All" },
     { name: "Live" },
     { name: "Upcoming" },
-    // { name: "Completed" },
+    { name: "Completed" },
   ],
 };
 
@@ -25,8 +25,13 @@ const isNFTinFilter = (nft, icoFilter) => {
   }
   if (icoFilter.name === IcoFilter.filters[IcoFilter.UPCOMING].name) {
     if (icoStatus == ICOStatus.NOT_INIT || icoStatus == ICOStatus.PENDING) {
-      console.log(icoFilter.name);
-      console.log(nft.name);
+      // console.log(icoFilter.name);
+      // console.log(nft.name);
+      return true;
+    }
+  }
+  if (icoFilter.name === IcoFilter.filters[IcoFilter.COMPLETED].name) {
+    if (icoStatus == ICOStatus.COMPLETED) {
       return true;
     }
   }
@@ -38,7 +43,7 @@ const nftFilter = (nfts, search, icoFilter) => {
     (nft) =>
       isNFTinFilter(nft, icoFilter) &&
       (nft.name.toLowerCase().includes(search.toLowerCase()) ||
-        nft.desc.toLowerCase().includes(search.toLowerCase()) ||
+        nft.description.toLowerCase().includes(search.toLowerCase()) ||
         (nft.rft &&
           nft.rft.symbol.toLowerCase().includes(search.toLowerCase())))
   );

@@ -49,7 +49,7 @@ class GetStarted extends React.Component {
                 </p>
                 <p className="card-text lh-base py-1">
                   In a couple of minutes buyers should be able to view your new
-                  NFT in the Marketplace.
+                  NFT in the ICO Marketplace.
                 </p>
                 <p className="card-text lh-base py-1">
                   {" "}
@@ -98,7 +98,7 @@ class GetStarted extends React.Component {
                 </p>
                 <p className="card-text lh-base py-1">
                   In a couple of minutes buyers should be able to view the
-                  information about your upcoming ICO in the Marketplace.
+                  information about your upcoming ICO in the ICO Marketplace.
                 </p>
                 <p className="card-text lh-base py-1">
                   However buyers will not be able to buy your Coins till you
@@ -149,7 +149,7 @@ class GetStarted extends React.Component {
                 </p>
                 <p className="card-text lh-base py-1">
                   In a couple of minutes buyers will be able to buy Coins for
-                  your NFT in the Marketplace. Congratulations!
+                  your NFT in the ICO Marketplace. Congratulations!
                 </p>
               </div>
             </div>
