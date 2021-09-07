@@ -3,6 +3,7 @@ import twitter from "../svg/twitter.svg";
 import instagram from "../svg/instagram.svg";
 import facebook from "../svg/facebook.svg";
 import youtube from "../svg/youtube.svg";
+import reddit from "../svg/reddit.svg";
 import person from "../svg/person.svg";
 
 const linksJSX = (props) => {
@@ -10,6 +11,7 @@ const linksJSX = (props) => {
   let instaJSX = "";
   let fbJSX = "";
   let youtubeJSX = "";
+  let redditJSX = "";
   let websiteJSX = "";
   if (props.nft.links) {
     let twitterLinks = props.nft.links.filter((link) => {
@@ -82,6 +84,20 @@ const linksJSX = (props) => {
         </a>
       );
     }
+    let redditLinks = props.nft.links.filter((link) => {
+      return link.name == "reddit";
+    });
+    if (redditLinks.length) {
+      redditJSX = (
+        <a
+          className="btn btn-light btn-sm border-0"
+          href={redditLinks[0].url}
+          target="_blank"
+        >
+          <img src={reddit} alt="reddit" />
+        </a>
+      );
+    }
   }
   return (
     <div className="d-flex justify-content-around pt-3">
@@ -89,6 +105,7 @@ const linksJSX = (props) => {
       {instaJSX}
       {fbJSX}
       {youtubeJSX}
+      {redditJSX}
       {websiteJSX}
     </div>
   );

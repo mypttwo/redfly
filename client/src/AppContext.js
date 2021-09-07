@@ -9,6 +9,7 @@ import {
 } from "./utils/serverBlockchainData";
 import EventEmitter, { DATA_LOADED_EVENT } from "./eventEmitter";
 import connectToMetamask from "./utils/metamask";
+import delay from "./utils/delay";
 
 export const AppContext = React.createContext({});
 
@@ -157,8 +158,9 @@ class AppContextProvider extends React.Component {
           return;
         } else {
           this.refreshSet.add(event.transactionHash);
-          console.log("CALLING REFRESH");
+          console.log("CALLING REFRESH for minted");
           try {
+            delay(30 * 1000);
             let { nftMap, nftTokenDataMap } =
               await getBlockchainDataFromServerMintUpdate(
                 event.returnValues.tokenId,

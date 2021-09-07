@@ -35,6 +35,7 @@ class NFTWizard extends React.Component {
     reddit: "",
     youtube: "",
     website: "",
+    status: "",
   };
 
   async componentDidMount() {
@@ -176,7 +177,7 @@ class NFTWizard extends React.Component {
       });
     }
   };
-  handleCreateNFTReciept = (error, receipt) => {
+  handleCreateNFTReciept = (error, confirmationNumber, receipt) => {
     if (error) {
       console.error("CreateNFT ", error);
       this.setState({
@@ -184,18 +185,31 @@ class NFTWizard extends React.Component {
       });
     } else {
       console.log(receipt.transactionHash);
-      this.setState({
-        url: "",
-        name: "",
-        description: "",
-        twitter: "",
-        facebook: "",
-        instagram: "",
-        website: "",
-        reddit: "",
-        processing: false,
-        page: DETAILS,
-      });
+      if (confirmationNumber <= 10) {
+        this.setState({
+          status: `Blockchain confirmation # ${confirmationNumber}`,
+        });
+      }
+      if (confirmationNumber > 10 && confirmationNumber <= 12) {
+        this.setState({
+          url: "",
+          name: "",
+          description: "",
+          twitter: "",
+          facebook: "",
+          instagram: "",
+          website: "",
+          reddit: "",
+          processing: false,
+          page: DETAILS,
+          status: `NFT Minted successfully! It should be public in a short while.`,
+        });
+      }
+      if (confirmationNumber > 12) {
+        this.setState({
+          status: "",
+        });
+      }
     }
   };
 
@@ -214,11 +228,13 @@ class NFTWizard extends React.Component {
     );
     if (this.state.processing) {
       btnJSX = (
-        <Loader
-          type="ThreeDots"
-          color="#00BFFF"
-          timeout={60000} //3 secs
-        />
+        <div className="shiftup" style={{ maxHeight: "25px" }}>
+          <Loader
+            type="ThreeDots"
+            color="#00BFFF"
+            timeout={60000} //3 secs
+          />
+        </div>
       );
     }
     return (
@@ -261,6 +277,9 @@ class NFTWizard extends React.Component {
             Prev
           </button>
           {btnJSX}
+        </div>
+        <div className="d-flex justify-content-end py-1 small">
+          <div>{this.state.status}</div>
         </div>
       </div>
     );

@@ -2,25 +2,21 @@ import React from "react";
 import mmlogo from "../metamask-fox.svg";
 import logo from "../logo.svg";
 import "../App.css";
-import Marketplace from "./marketplace";
+import Marketplace from "./marketplaceWithPagination";
 import Manager from "./manager";
-import Classified from "./classified";
 
-import { getMaskedAddress } from "../utils/shorten";
 import connectToMetamask from "../utils/metamask";
 import Main from "./main";
 import CreateNFT from "./createNft";
-import ImportNFT from "./nftImport";
+import ImportNFT from "./nftImportWithPagination";
 import { getNetworkId } from "../utils/network";
-import MetamaskConnectWarning from "./metamaskConnectWarning";
 import withAppContext from "../hocs/withAppContext";
 
-import light from "../svg/moon-stars.svg";
-import dark from "../svg/moon-stars-fill.svg";
 import GetStarted from "./howToGetStarted";
 import Withdraw from "./howToWithdraw";
-import classified from "./classified";
+
 import WallectConnect from "./walletConnect";
+import ToggleDark from "./toggleDark";
 
 export const MAIN = 0;
 export const MARKET_PLACE = 1;
@@ -34,8 +30,6 @@ export const CLASSIFIED = 7;
 class Home extends React.Component {
   state = {
     page: MARKET_PLACE,
-    stylePath:
-      "https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/darkly/bootstrap.min.css",
     accounts: [],
     network: "",
   };
@@ -111,12 +105,6 @@ class Home extends React.Component {
       reset();
     }
 
-    if (this.state.page == CLASSIFIED) {
-      page = <Classified gotoPage={this.gotoPage}></Classified>;
-      reset();
-      classifiedActive = "text-decoration-underline";
-    }
-
     if (this.state.page == CREATENFT) {
       page = <CreateNFT></CreateNFT>;
       reset();
@@ -144,22 +132,8 @@ class Home extends React.Component {
       managerActive,
       createNFTActive,
       importNFTActive,
-      classifiedActive,
+      // classifiedActive,
     };
-  };
-
-  toggleDark = () => {
-    let stylePath =
-      "https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/flatly/bootstrap.min.css";
-
-    if (this.state.stylePath.includes("flatly")) {
-      stylePath =
-        "https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/darkly/bootstrap.min.css";
-    }
-    this.props.appContext.setStylePath(stylePath);
-    this.setState({
-      stylePath,
-    });
   };
 
   render() {
@@ -169,64 +143,20 @@ class Home extends React.Component {
       managerActive,
       createNFTActive,
       importNFTActive,
-      classifiedActive,
+      // classifiedActive,
     } = this.getPage();
-
-    let darkModeJSX = (
-      <div
-        className="form-check form-switch mx-5 my-2"
-        data-bs-toggle="tooltip"
-        data-bs-placement="bottom"
-        title="Dark/Light mode"
-      >
-        <input
-          className="form-check-input"
-          type="checkbox"
-          id="darkModeSwitch"
-          onClick={this.toggleDark}
-        />
-        <label
-          className="form-check-label text-secondary"
-          htmlFor="darkModeSwitch"
-        >
-          <img
-            src={this.state.stylePath.includes("flatly") ? light : dark}
-            alt="website"
-          />
-        </label>
-      </div>
-    );
-    let accountsJSX = (
-      <>
-        <button
-          className="btn btn-sm px-3 btn-outline-warning"
-          type="button"
-          onClick={this.setupMetamask}
-        >
-          <img src={mmlogo} className="mm-logo" alt="metamask" />
-          Connect
-        </button>
-      </>
-    );
-
-    // if (this.state.accounts.length) {
-    //   accountsJSX = (
-    //     <p className="btn-link pt-3" onClick={this.setupMetamask}>
-    //       {getMaskedAddress(this.state.accounts[0])}
-    //     </p>
-    //   );
-    // }
 
     return (
       <div className="App">
-        <link rel="stylesheet" type="text/css" href={this.state.stylePath} />
         <nav
           className={`navbar navbar-expand-md shadow ${
-            this.state.stylePath.includes("flatly")
+            this.props.appContext.stylePath.includes("flatly")
               ? "navbar-light"
               : "navbar-dark"
           }  ${
-            this.state.stylePath.includes("flatly") ? "bg-light" : "bg-dark"
+            this.props.appContext.stylePath.includes("flatly")
+              ? "bg-light"
+              : "bg-dark"
           } fixed-top font-monospace text-info`}
         >
           <div className="container-fluid">
@@ -267,17 +197,6 @@ class Home extends React.Component {
                     ICO Marketplace
                   </button>
                 </li>
-                <li className="nav-item">
-                  <button
-                    className={`btn btn-link  border-0 ${classifiedActive}`}
-                    onClick={() => this.gotoPage(CLASSIFIED)}
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="bottom"
-                    title="Buy/Sell"
-                  >
-                    Buy/Sell
-                  </button>
-                </li>
                 <li className="nav-item dropdown">
                   <a
                     className="nav-link dropdown-toggle show opaque"
@@ -307,7 +226,9 @@ class Home extends React.Component {
                   </div>
                 </li>
               </ul>
-              <form className="d-flex">{darkModeJSX}</form>
+              <form className="d-flex">
+                <ToggleDark></ToggleDark>
+              </form>
               <form className="d-flex my-1 mr-3">
                 <button
                   type="button"
@@ -338,15 +259,10 @@ class Home extends React.Component {
                   ICO Dashboard
                 </button>
               </form>
-              {/* <form className="mx-3">{this.state.network}</form>
-              <form className="d-flex">{accountsJSX}</form> */}
               <WallectConnect></WallectConnect>
             </div>
           </div>
         </nav>
-        {/* <div className="container">
-          <MetamaskConnectWarning></MetamaskConnectWarning>
-        </div> */}
         <div className="mt-4">{page}</div>
         <footer className="text-muted py-5">
           <div className="container">

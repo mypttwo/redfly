@@ -15,10 +15,17 @@ class IcoSetupForm extends React.Component {
   };
 
   handleChange = (event) => {
-    const { name, value } = event.target;
+    let { name, value } = event.target;
     let isValid = true;
     switch (name) {
       case "tokenPrice":
+        let val_ = parseFloat(value);
+        if (isNaN(val_)) {
+          isValid = false;
+        } else {
+          value = val_;
+        }
+        break;
       case "tokenSupply":
       case "tokenReserve":
         const regexp = new RegExp(`^-?[0-9]*$`);
@@ -129,7 +136,9 @@ class IcoSetupForm extends React.Component {
               Price in DAI
             </label>
             <input
-              type="text"
+              // type="text"
+              type="number"
+              min="0"
               className="form-control"
               name="tokenPrice"
               placeholder="Example : 1"

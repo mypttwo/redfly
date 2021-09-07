@@ -1,4 +1,5 @@
 import React from "react";
+import AddToken from "../components/addToken";
 
 import {
   ICOStatus,
@@ -20,10 +21,17 @@ class IcoDataPage extends React.Component {
         );
         break;
       case ICOStatus.IN_PROGRESS:
+        icoStatusJSX = (
+          <div className="d-flex justify-content-center align-items-center p-3">
+            <span className="mr-3">ICO End Date</span>
+            <span className="">{this.props.icoEndDate.toDateString()}</span>
+          </div>
+        );
+        break;
       case ICOStatus.COMPLETED:
         icoStatusJSX = (
-          <div className="d-flex justify-content-between align-items-center p-3">
-            <span>ICO End Date</span>
+          <div className="d-flex justify-content-center align-items-center p-3">
+            <span className="mr-3">ICO ended on</span>
             <span className="">{this.props.icoEndDate.toDateString()}</span>
           </div>
         );
@@ -36,36 +44,29 @@ class IcoDataPage extends React.Component {
   };
 
   render() {
-    // console.log(JSON.stringify(this.props));
-
-    // let collapseTarget = `collapse${this.props.index}`;
-
     return (
       <React.Fragment>
         <div className="pb-1 justify-content-center">
-          {/* <button
-            className="btn btn-primary  dropdown-toggle btn-block"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target={"#" + collapseTarget}
-          >
-            {this.props.nft.rft.symbol.toUpperCase()}
-            <span className="badge badge-warning mx-1">
-              {this.props.balance}
-            </span>
-          </button> */}
-
-          {/* <div className="collapse" id={collapseTarget}> */}
-
           <div className="container">
             <div className="row pt-3 border-top border-secondary">
               <div className="col d-flex justify-content-center">
-                <div className="h4 font-monospace text-warning">
+                <div className="h4 font-monospace text-warning mx-3">
                   {this.props.nft.rft.symbol}
                 </div>
+                <AddToken
+                  rftContractAddress={this.props.nft.rft.rftContractAddress}
+                  symbol={this.props.nft.rft.symbol}
+                ></AddToken>
               </div>
             </div>
-
+            {/* <div className="row pt-3 ">
+              <div className="col d-flex justify-content-center">
+                <AddToken
+                  rftContractAddress={this.props.nft.rft.rftContractAddress}
+                  symbol={this.props.nft.rft.symbol}
+                ></AddToken>
+              </div>
+            </div> */}
             <div className="row py-3">
               <div className="col" style={{ textAlign: "center" }}>
                 <span className="i">Issued</span>
@@ -92,45 +93,9 @@ class IcoDataPage extends React.Component {
             </div>
           </div>
           <ul className="list-group list-group-flush mt-1">
-            {/* <li className="list-group-item d-flex justify-content-between align-items-center text-muted">
-                Name
-                <span className=" text-info">{this.props.nft.rft.name}</span>
-              </li>
-              <li className="list-group-item d-flex justify-content-between align-items-center text-muted">
-                Symbol
-                <span className=" text-info">{this.props.nft.rft.symbol}</span>
-              </li> */}
-            {/* <li className="list-group-item d-flex justify-content-between align-items-center text-muted">
-                Price in DAI
-                <span className=" text-info">
-                  {this.props.nft.rft.tokenPrice}
-                </span>
-              </li> */}
-            {/* <li className="list-group-item d-flex justify-content-between align-items-center text-muted">
-                Issued
-                <span className=" text-info">
-                  {this.props.nft.rft.tokenSupply}
-                </span>
-              </li> */}
-            {/* <li className="list-group-item d-flex justify-content-between align-items-center text-muted">
-              Reserved
-              <span className=" text-info">
-                {this.props.nft.rft.tokenReserve}
-              </span>
-            </li> */}
-            {/* <li className="list-group-item d-flex justify-content-between align-items-center text-muted">
-                Sold
-                <span className=" text-info">{this.props.totalSupply}</span>
-              </li>
-              <li className="list-group-item d-flex justify-content-between align-items-center text-muted">
-                You own
-                <span className=" text-info">{this.props.balance}</span>
-              </li> */}
-
             {this.getICOStatusJSX()}
           </ul>
           {this.props.children}
-          {/* </div> */}
         </div>
       </React.Fragment>
     );

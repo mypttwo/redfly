@@ -62,4 +62,27 @@ const getRFTDataList = async (rftAddressList) => {
   return [];
 };
 
+const getRFTDataListWithoutCheck = async (rftAddressList) => {
+  const web3 = new Web3(new Web3.providers.HttpProvider(network));
+
+  let start = Date.now();
+  if (Array.isArray(rftAddressList)) {
+    let rftDataPromises = rftAddressList.map((rftAddress) => {
+      let rftc = new web3.eth.Contract(abi, rftAddress);
+      let res = rftc.methods.getData().call();
+      return res;
+    });
+    return Promise.all(rftDataPromises).then((values) => {
+      let rfts = values.map((value) => {
+        return readRFTData(value, web3);
+      });
+      let end = Date.now();
+      console.log(`reading RFTs Execution time: ${end - start} ms`);
+      return rfts;
+    });
+  }
+
+  return [];
+};
+
 module.exports = { getRFTData, getRFTDataList };

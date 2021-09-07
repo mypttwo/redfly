@@ -9,6 +9,8 @@ import { IcoFilter } from "../utils/nftFilter";
 import { filterMergedDataForAddress } from "../utils/contractData";
 import IcoSetupForm from "./icoSetupForm";
 
+import View from "../components/view";
+
 import NFTWizard from "./nftWizard";
 
 class Manager extends React.Component {
@@ -16,6 +18,8 @@ class Manager extends React.Component {
     nfts: [],
     collapse: "collapse",
     search: "",
+
+    viewNft: null,
   };
 
   async componentDidMount() {
@@ -115,7 +119,17 @@ class Manager extends React.Component {
     );
   };
 
-  render() {
+  displayView = (nft) => {
+    this.setState({
+      viewNft: nft,
+    });
+  };
+
+  getPage = () => {
+    if (this.state.viewNft) {
+      return <View nft={this.state.viewNft} view={this.displayView}></View>;
+    }
+
     let nfts = nftFilter(
       this.state.nfts,
       this.state.search,
@@ -123,13 +137,19 @@ class Manager extends React.Component {
     );
 
     return (
+      <>
+        {this.getCreateNFTJSX()}
+        <ArtworkCollectionMasonry nfts={nfts} view={this.displayView}>
+          {this.getChildrenJSX(nfts)}
+        </ArtworkCollectionMasonry>
+      </>
+    );
+  };
+
+  render() {
+    return (
       <div>
-        <div className="container">
-          {this.getCreateNFTJSX()}
-          <ArtworkCollectionMasonry nfts={nfts}>
-            {this.getChildrenJSX(nfts)}
-          </ArtworkCollectionMasonry>
-        </div>
+        <div className="container">{this.getPage()}</div>
       </div>
     );
   }

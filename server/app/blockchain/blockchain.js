@@ -1,7 +1,7 @@
 "use strict";
 
 const { network, networkWss } = require("../config");
-const Web3 = require("web3");
+const web3 = require("./web3");
 const { abi: nftABI, address: nftAddress } = require("./nftContractDef");
 const {
   abi: rftFactoryABI,
@@ -23,15 +23,7 @@ let blockchainData = { nftTokens: [], nfts: [] };
 let nftTokenDataMap = new Map();
 let nftMap = new Map();
 let rftSet = new Set();
-// const web3 = new Web3(new Web3.providers.WebsocketProvider(network));
-const web3 = new Web3(
-  new Web3.providers.WebsocketProvider(networkWss, {
-    clientOptions: {
-      maxReceivedFrameSize: 100000000,
-      maxReceivedMessageSize: 100000000,
-    },
-  })
-);
+let trxSet = new Set();
 
 const handleNewRFT = async (error, event) => {
   if (error) {
@@ -55,7 +47,14 @@ const handleMinted = async (error, event) => {
   if (error) {
     console.error("Minted event", error);
   } else {
-    console.log(JSON.stringify(event));
+    console.log("Minted event trxHash : ", event.transactionHash);
+    if (trxSet.has(event.transactionHash)) {
+      console.log(
+        `Minted event trxHash : ${event.transactionHash} is already being processed. Not processing.`
+      );
+      return;
+    }
+    trxSet.add(event.transactionHash);
     if (event.returnValues && event.returnValues.tokenId) {
       console.log("handleMinted tokenId", event.returnValues.tokenId);
       let nftTokenData = await getNFTTokenData(
@@ -166,7 +165,7 @@ const readBlockchain = async () => {
   //reading nft data
   let start = Date.now();
   let nftc = setupNFTContract(web3, nftABI, nftAddress, getNFTEventHandlers());
-  let nftTokenList = await getAllNFTTokensInternal(nftc);
+  let nftTokenList = await getAllNFTTokensInternal(nftc, nftTokenDataMap);
   let nftData = await getNFTData(nftc);
   let end = Date.now();
   console.log(`nfts Execution time: ${end - start} ms`);
@@ -188,8 +187,13 @@ const readBlockchain = async () => {
     rftFactoryAddress,
     getRFTFactoryEventHandlers()
   );
-  let rftAddressList = await getRFTAddressList(rftfc);
-  rftSet = new Set(rftAddressList);
+  let rftAddressListAll = await getRFTAddressList(rftfc);
+  let rftAddressList = rftAddressListAll.filter((rftAddress) => {
+    if (!rftSet.has(rftAddress)) {
+      rftSet.add(rftAddress);
+      return true;
+    }
+  });
   let rfts = await getRFTDataList(rftAddressList);
   end = Date.now();
   console.log(`rfts Execution time: ${end - start} ms`);
@@ -206,6 +210,18 @@ const readBlockchain = async () => {
   return { nftTokens, nfts };
 };
 
+const msToTime = (duration) => {
+  let milliseconds = Math.floor((duration % 1000) / 100),
+    seconds = Math.floor((duration / 1000) % 60),
+    minutes = Math.floor((duration / (1000 * 60)) % 60),
+    hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+  hours = hours < 10 ? "0" + hours : hours;
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  seconds = seconds < 10 ? "0" + seconds : seconds;
+
+  return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+};
 const getData = async () => {
   let start = Date.now();
   console.log("network", networkWss);
@@ -217,8 +233,14 @@ const getData = async () => {
   blockchainData = { nftTokens, nfts };
   console.log("data", blockchainData);
   let end = Date.now();
-  console.log(`blockchainData Execution time: ${end - start} ms`);
+  console.log(`blockchainData Execution time: ${msToTime(end - start)} ms`);
   return blockchainData;
 };
 
-module.exports = { getData, mintUpdate, newIcoUpdate, icoStartUpdate };
+module.exports = {
+  getData,
+  mintUpdate,
+  newIcoUpdate,
+  icoStartUpdate,
+  readBlockchain,
+};

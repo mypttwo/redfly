@@ -1,5 +1,5 @@
 import React from "react";
-import ArtworkCollectionMasonry from "../components/masonry";
+import ArtworkCollectionMasonry from "../containers/artworkCollectionMasonry";
 import { getNFTsForAddress, getNFTDataArray } from "../utils/nftTokenTracker";
 import IcoSetupForm from "./icoSetupForm";
 import Loader from "react-loader-spinner";
@@ -30,9 +30,7 @@ class ImportNFT extends React.Component {
     );
     // console.log(result);
     if (Array.isArray(result))
-      this.setState({ nftArray: result }, () =>
-        this.updatePage(this.state.currentPage)
-      );
+      this.setState({ nftArray: result, dataLoaded: true });
   }
 
   handleIcoSetupCompletion = (nft, receipt) => {
@@ -66,75 +64,75 @@ class ImportNFT extends React.Component {
     return Math.floor(this.state.nftArray.length / numOfNfts);
   };
 
-  next = () => {
-    let nextPage = this.state.currentPage + 1;
-    if (nextPage < this.getNumPages()) {
-      this.updatePage(nextPage);
-    }
-  };
-  prev = () => {
-    let prevPage = this.state.currentPage - 1;
-    if (prevPage >= 0) {
-      this.updatePage(prevPage);
-    }
-  };
-  updatePage = async (page) => {
-    let nftEndIndex = (page + 1) * numOfNfts - 1; //8, 17, 26...
+  // next = () => {
+  //   let nextPage = this.state.currentPage + 1;
+  //   if (nextPage < this.getNumPages()) {
+  //     this.updatePage(nextPage);
+  //   }
+  // };
+  // prev = () => {
+  //   let prevPage = this.state.currentPage - 1;
+  //   if (prevPage >= 0) {
+  //     this.updatePage(prevPage);
+  //   }
+  // };
+  // updatePage = async (page) => {
+  //   let nftEndIndex = (page + 1) * numOfNfts - 1; //8, 17, 26...
 
-    let nftStartIndex = nftEndIndex - numOfNfts + 1; // 0, 9, 18...
-    // console.log("s", nftStartIndex);
-    // console.log("e", nftEndIndex);
-    let nftArray = this.state.nftArray.slice(nftStartIndex, nftEndIndex);
-    await getNFTDataArray(nftArray, this.updatePageHandler(page));
-  };
-  updatePageHandler = (page) => {
-    return (nftDataArray, errors) => {
-      //   console.log(nftDataArray);
-      this.setState({
-        currentPage: page,
-        nftDataArray: nftDataArray,
-        errors: errors,
-        dataLoaded: true,
-      });
-    };
-  };
+  //   let nftStartIndex = nftEndIndex - numOfNfts + 1; // 0, 9, 18...
+  //   // console.log("s", nftStartIndex);
+  //   // console.log("e", nftEndIndex);
+  //   let nftArray = this.state.nftArray.slice(nftStartIndex, nftEndIndex);
+  //   await getNFTDataArray(nftArray, this.updatePageHandler(page));
+  // };
+  // updatePageHandler = (page) => {
+  //   return (nftDataArray, errors) => {
+  //     //   console.log(nftDataArray);
+  //     this.setState({
+  //       currentPage: page,
+  //       nftDataArray: nftDataArray,
+  //       errors: errors,
+  //       dataLoaded: true,
+  //     });
+  //   };
+  // };
 
-  getPagination = () => {
-    if (this.state.nftArray.length < numOfNfts) {
-      return <></>;
-    }
-    let numPages = this.getNumPages();
-    let links = [];
-    // console.log("cp", this.state.currentPage);
-    for (let c = 0; c < numPages; c++) {
-      let active = this.state.currentPage == c ? "active" : "";
-      links.push(
-        <li className={`page-item ${active}`} key={c}>
-          <a className="page-link" href="#" onClick={() => this.updatePage(c)}>
-            {c + 1}
-          </a>
-        </li>
-      );
-    }
+  // getPagination = () => {
+  //   if (this.state.nftArray.length < numOfNfts) {
+  //     return <></>;
+  //   }
+  //   let numPages = this.getNumPages();
+  //   let links = [];
+  //   // console.log("cp", this.state.currentPage);
+  //   for (let c = 0; c < numPages; c++) {
+  //     let active = this.state.currentPage == c ? "active" : "";
+  //     links.push(
+  //       <li className={`page-item ${active}`} key={c}>
+  //         <a className="page-link" href="#" onClick={() => this.updatePage(c)}>
+  //           {c + 1}
+  //         </a>
+  //       </li>
+  //     );
+  //   }
 
-    return (
-      <nav aria-label="...">
-        <ul className="pagination">
-          <li className="page-item">
-            <a className="page-link" href="#" tabindex="-1" onClick={this.prev}>
-              Previous
-            </a>
-          </li>
-          {links}
-          <li className="page-item">
-            <a className="page-link" href="#" onClick={this.next}>
-              Next
-            </a>
-          </li>
-        </ul>
-      </nav>
-    );
-  };
+  //   return (
+  //     <nav aria-label="...">
+  //       <ul className="pagination">
+  //         <li className="page-item">
+  //           <a className="page-link" href="#" tabindex="-1" onClick={this.prev}>
+  //             Previous
+  //           </a>
+  //         </li>
+  //         {links}
+  //         <li className="page-item">
+  //           <a className="page-link" href="#" onClick={this.next}>
+  //             Next
+  //           </a>
+  //         </li>
+  //       </ul>
+  //     </nav>
+  //   );
+  // };
 
   displayView = (nft) => {
     let display = DISPLAY.MAIN;
@@ -157,14 +155,13 @@ class ImportNFT extends React.Component {
       default:
         return (
           <div className="container">
-            {this.getPagination()}
             <ArtworkCollectionMasonry
-              nfts={this.state.nftDataArray}
+              nfts={this.state.nftArray}
               view={this.displayView}
+              dynamicLoad={true}
             >
               {this.getChildrenJSX(this.state.nftDataArray)}
             </ArtworkCollectionMasonry>
-            {/* {this.getPagination()} */}
             {this.errorsJSX()}
           </div>
         );

@@ -3,10 +3,11 @@
 const axios = require("axios");
 const { getDescription, getImage, getName } = require("./tokenURIReader");
 const { createNFTObj, createNFTTokenObj } = require("./createObj");
+const { nftContractAddress } = require("../config");
 
-const delay = (ms = 3000) => new Promise((r) => setTimeout(r, ms));
+const delay = (ms = 1000) => new Promise((r) => setTimeout(r, ms));
 
-const getAllNFTTokensInternal = async (nftc) => {
+const getAllNFTTokensInternalWithoutWait = async (nftc) => {
   try {
     let tokenData = await nftc.methods.allTokens().call();
 
@@ -41,6 +42,47 @@ const getAllNFTTokensInternal = async (nftc) => {
       //   console.log(nfts);
       return nfts.filter((nft) => nft);
     });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const getAllNFTTokensInternal = async (nftc, nftTokenDataMap) => {
+  try {
+    let tokenData = await nftc.methods.allTokens().call();
+
+    let nftList = [];
+    let index = 0;
+    for (let tokenURI of tokenData[1]) {
+      let key = nftContractAddress.toLowerCase() + tokenData[0][index];
+      let nft;
+      if (nftTokenDataMap.has(key)) {
+        nft = nftTokenDataMap.get(key);
+      } else {
+        let value = await axios.get(`${tokenURI}`);
+        try {
+          nft = createNFTTokenObj(
+            nftc.options.address,
+            null,
+            null,
+            tokenData[2][index],
+            tokenData[0][index],
+            tokenData[1][index],
+            getName(value.data),
+            getImage(value.data),
+            getDescription(value.data)
+          );
+          if (value.data.links) {
+            nft.links = value.data.links;
+          }
+        } catch (error) {
+          console.error(`${tokenURI} error`, error);
+        }
+      }
+      nftList.push(nft);
+      index++;
+    }
+    return nftList;
   } catch (error) {
     console.error(error);
   }

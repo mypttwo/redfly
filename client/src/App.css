@@ -90,4 +90,35 @@ width: calc(100% - 30px);
   font-size: .6rem;
 }
 
+.mouse{
+  cursor: pointer;
+}
+
+.shiftup{
+  transform: translateY(-20px);
+}
+
+.shadowSpecial{
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
+
+.iframe-wrapper{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: blue;
+  position: relative;
+    overflow: hidden;
+}
+.iframe-wrapper iframe {
+  display: block;
+  position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 

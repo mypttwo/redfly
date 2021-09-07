@@ -84,15 +84,15 @@ class IcoWithdrawForm extends React.Component {
 
   withdraw = async () => {
     console.log(this.state.amount);
-    // withdrawDai(
-    //   this.state.amount,
-    //   this.props.nft.rft.rftContractAddress,
-    //   this.withdrawDaiRecieptHandler
-    // );
-    // this.setState({
-    //   statusMessage: "Withdrawing DAI",
-    //   enableActionButton: false,
-    // });
+    withdrawDai(
+      this.state.amount,
+      this.props.nft.rft.rftContractAddress,
+      this.withdrawDaiRecieptHandler
+    );
+    this.setState({
+      statusMessage: "Withdrawing DAI",
+      enableActionButton: false,
+    });
   };
   render() {
     return (

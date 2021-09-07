@@ -1,14 +1,13 @@
 import React from "react";
 import { getUSDEth } from "../utils/currency";
 import withAppContext from "../hocs/withAppContext";
-import ArtworkCollectionMasonry from "../components/masonry";
+import ArtworkCollectionMasonry from "./artworkCollectionMasonry";
 import Search from "../components/search";
 import IcoManager, { PAGETYPE } from "./icoManager";
 import View from "../components/view";
 import Classifieds from "./classifieds";
 
 import Loader from "react-loader-spinner";
-// import IcoDropdown from "./icoDropdown";
 import nftFilter from "../utils/nftFilter";
 import { IcoFilter } from "../utils/nftFilter";
 import NFTFilterDropdown from "./nftFilterDropdown";
@@ -76,24 +75,11 @@ class Marketplace extends React.Component {
     });
   };
 
-  getControls = () => {
+  getControls = (nfts) => {
     return (
       <form>
-        {/* <div className="row">
-          <div className="col">
-            <Pagination
-              nftArray={this.state.nfts}
-              numOfNfts={4}
-              setPageList={(list) => console.log(list)}
-            ></Pagination>
-          </div>
-        </div> */}
         <div className="row">
           <div className="col-4">
-            {/* <IcoDropdown
-              icoFilter={this.state.icoFilter}
-              updateIcoFilter={this.updateIcoFilter}
-            ></IcoDropdown> */}
             <NFTFilterDropdown
               icoFilter={this.state.icoFilter}
               updateIcoFilter={this.updateIcoFilter}
@@ -173,10 +159,14 @@ class Marketplace extends React.Component {
         let nfts = this.filterNfts();
         return (
           <>
-            {this.getControls()}
-            <ArtworkCollectionMasonry nfts={nfts} view={this.displayView}>
-              {this.getChildrenJSX(nfts)}
-            </ArtworkCollectionMasonry>
+            {this.getControls(nfts)}
+            <ArtworkCollectionMasonry
+              nfts={nfts}
+              view={this.displayView}
+              displayClassifieds={this.displayClassifieds}
+              pageType={PAGETYPE.MARKETPLACE}
+              key={1}
+            ></ArtworkCollectionMasonry>
           </>
         );
     }

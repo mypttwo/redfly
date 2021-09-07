@@ -20,6 +20,19 @@ const setupNFTContract = (eventHandler) => {
     }
   });
 
+  // nftc.events
+  //   .Minted({ fromBlock: 3 })
+  //   .on("data", function (event) {
+  //     if (eventHandler && eventHandler.handleMinted) {
+  //       eventHandler.handleMinted(null, event);
+  //     }
+  //   })
+  //   .on("error", function (error) {
+  //     if (eventHandler && eventHandler.handleMinted) {
+  //       eventHandler.handleMinted(error, null);
+  //     }
+  //   });
+
   nftc.events.Burnt(async (error, event) => {
     if (eventHandler && eventHandler.handleBurnt) {
       eventHandler.handleBurnt(error, event);
@@ -54,15 +67,15 @@ const createNFT = async (nftc, tokenUri, recieptHandler) => {
         .on("transactionHash", function (hash) {
           console.log("hash :" + hash);
         })
-        .on("receipt", function (receipt) {
+        .on("confirmation", function (confirmationNumber, receipt) {
           //console.log("receipt :" + JSON.stringify(receipt));
-          recieptHandler(null, receipt);
+          recieptHandler(null, confirmationNumber, receipt);
         })
         .on("error", function (error, receipt) {
           // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
           //   console.log("error :" + error);
           //   console.log("receipt :" + receipt);
-          recieptHandler(error, receipt);
+          recieptHandler(error, null, receipt);
         });
     } catch (error) {
       console.error(error);
